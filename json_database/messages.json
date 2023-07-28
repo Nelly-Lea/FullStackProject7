@@ -1,0 +1,24 @@
+[
+    {
+      "id": 1,
+      "sender": 2,
+      "receiver": 3,
+      "text": "Hi, how are you?",
+      "date":"2023/7/26",
+      "hour": "14:0:38",
+      "image": "",
+      "isItRead": true,
+      "isItGroup":false
+    },
+    {
+        "id": 2,
+        "sender": 3,
+        "receiver": 2,
+        "text": "fine and you?",
+        "date":"2023/7/26",
+        "hour": "14:3:38",
+        "image": "",
+        "isItRead": true,
+        "isItGroup":false
+      }
+  ]
