@@ -1,7 +1,0 @@
-[
-  {
-    "id": 1,
-    "msgId": 1,
-    "checked": false
-  }
-]
