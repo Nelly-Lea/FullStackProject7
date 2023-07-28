@@ -245,7 +245,7 @@ async function createMessagesTableAndInsertData() {
       const { id, sender, receiver, text, date, hour, image, isItRead, isItGroup } = message;
       await executeQuery(`
         INSERT INTO messages (id, sender, receiver, text, date, hour, image, isItRead, isItGroup)
-        VALUES (${id}, '${sender}', '${receiver}', '${text}', '${date}', '${hour}', '${image}', '${isItRead}', '${isItGroup}')
+        VALUES (${id}, '${sender}', '${receiver}', '${text}', '${date}', '${hour}', '${image}', ${isItRead}, ${isItGroup})
       `);
     }
 
@@ -255,16 +255,5 @@ async function createMessagesTableAndInsertData() {
   }
 }
 
-// // HTTP server setup
-// const server = http.createServer((req, res) => {
-//   // Handle incoming requests (if needed)
-// });
-
-// Start the HTTP server and perform database operations
-// server.listen(3000, () => {
-//   console.log('Server started on port 3000.');
-
-  // Call the functions to create tables and insert data
 createUsersTableAndInsertData();
 createMessagesTableAndInsertData();
-// });
