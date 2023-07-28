@@ -104,6 +104,9 @@ const handleChange = ({target}) => {
         />
         <input id="submitButton" type="submit" name="submit" value="LOG IN" />
     </form>
+    <Link className="loginLink" to="/register">
+                REGISTER
+    </Link>
     </div>
     
   )
