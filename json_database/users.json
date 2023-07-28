@@ -1,0 +1,20 @@
+[
+  {
+    "id": 1,
+    "name": "Admin",
+    "phone": "0521364152",
+    "email": "admin@gmail.com",
+    "profil": "https://cdn.xxl.thumbs.canstockphoto.fr/admin-dessins_csp10870591.jpg",
+    "status": "available",
+    "password": "password"
+  },
+  {
+    "id": 2,
+    "name": "Chirly Sfez",
+    "phone": "0545264163",
+    "email": "chirly@gmail.com",
+    "profil": "https://1.bp.blogspot.com/-vIu8IZ16cy8/VGXUum3PjZI/AAAAAAAAKzo/jpwxu0pFaDc/s1600/feliz-felicidade-e1410049855859.jpg",
+    "status": "available",
+    "password": "1234"
+  }
+]
