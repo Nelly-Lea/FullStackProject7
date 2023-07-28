@@ -55,7 +55,7 @@ async function insertUser(user) {
 async function insertUsersData() {
   try {
     // Lire le fichier JSON
-    const filePath = 'C:\\Users\\nelly\\Documents\\Full Stack\\Project 7\\json_database\\users.json';
+    const filePath = 'C:\\Users\\nelly\\Documents\\Full Stack\\Project 7\\FullStackProject7\\json_database\\users.json';
     fs.readFile(filePath, 'utf-8', async (error, jsonData) => {
       if (error) {
         console.error('Erreur lors de la lecture du fichier JSON:', error);
