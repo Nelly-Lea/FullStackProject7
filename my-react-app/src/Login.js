@@ -5,7 +5,8 @@ import { Link,useNavigate } from "react-router-dom"
 import { useState ,useEffect } from "react";
 
 // const validPassword = /^\d{1,10}$/;
-const validPhone = /^\d{10}$/;
+//const validPhone = /^\d{10}$/; // changee
+const validPhone = /^$|^\d{0,10}$/;
 
 export default function Login() {
 
