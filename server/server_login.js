@@ -3,12 +3,13 @@ const mysql = require('mysql2');
 const express = require('express')
 const app = express()
 const cors = require('cors');
+//app.use(express.static('my-react-app'));
 
 // Configuration de la connexion à la base de données
 const connection = mysql.createConnection({
     host: "localhost",
     user: "root",
-    password: "Motdepasse17",
+    password: "Neraph1902",
     database: "db_project7"
 });
 
