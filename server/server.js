@@ -10,7 +10,7 @@ app.use(express.json());
 const connection = mysql.createConnection({
     host: "localhost",
     user: "root",
-    password: "Neraph1902",
+    password: "Motdepasse17",
     database: "db_project7"
 });
 
@@ -24,7 +24,8 @@ connection.connect((err) => {
 });
 
 
-const usersRouter = require('./users'); // Import the users.js file
+// const usersRouter = require('./users'); // Import the users.js file
+const usersRouter = require('./users')(connection);
 console.log(usersRouter);
 // const messagesRouter = require('./messages'); // Import the messages.js file
 // const groupsRouter = require('./groups'); // Import the groups.js file
