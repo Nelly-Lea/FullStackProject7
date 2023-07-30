@@ -6,7 +6,7 @@ import { useState ,useEffect } from "react";
 //import ReactDOM from "react-dom/client";
 
 // regex to match numbers between 1 and 10 digits long
-const validPassword = /^\d{1,10}$/;
+// const validPassword = /^\d{1,10}$/;
 
 export default function Register() {
 
@@ -18,12 +18,12 @@ const handleChange = ({target}) => {
     let isValid=true;
     const {name,value} = target;
 
-    if (name ==='password'){
-        isValid=  validPassword.test(value);
-    }
-    if (isValid) {
-        setInputs(values => ({...values, [name]: value}))
-    }
+    // if (name ==='password'){
+    //     isValid=  validPassword.test(value);
+    // }
+    // if (isValid) {
+    setInputs(values => ({...values, [name]: value}))
+    // }
 
 }
 
@@ -38,7 +38,7 @@ const handleSubmit = async (event) => {
     console.log(inputs);
   
     try {
-      const response = await fetch(`http://localhost:3000/${inputs.username}/users`, {
+      const response = await fetch(`users/${inputs.username}`, {
         method: "POST",
         body: data, // Envoyer les données telles quelles (déjà au format JSON)
         headers: {
@@ -64,34 +64,26 @@ const handleSubmit = async (event) => {
     }
   };
   
- 
+  const profilePictureOptions = [
+    {
+      value: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png',
+      label: 'Première photo',
+    },
+    {
+      value: 'https://i.pinimg.com/564x/26/ea/62/26ea622c0a0260942f7830db79d3a82a.jpg',
+      label: 'Deuxième photo',
+    },
+    {
+      value: 'https://img.freepik.com/photos-gratuite/vue-verticale-du-celebre-rocher-plage-santa-giulia_268835-3741.jpg?w=2000',
+      label: 'Troisième photo',
+    },
+  ];
 
   return (
     <div className="login-container">
       <h1>WELCOME</h1>
       <form onSubmit={handleSubmit} className="login-form">
-          <input 
-            className="inputTypeIn"
-            id="userNameInput"
-            type="text" 
-            name="username" 
-            value={inputs.username || ""} 
-            onChange={handleChange}
-            placeholder="Enter your name:"
-            required
-          />
-          <input
-            id="passwordInput"
-            className="inputTypeIn"
-            maxLength={4} 
-            type="password" 
-            name="password" 
-          value={inputs.password || ""} 
-            onChange={handleChange}
-            placeholder="Enter your password:"
-          required
-        />
-        <input
+      <input
             id="nameInput"
             className="inputTypeIn"
             type="text" 
@@ -101,24 +93,15 @@ const handleSubmit = async (event) => {
             placeholder="Enter your name:"
           required
         />
-        <input
-            id="emailInput"
+          <input
+            id="passwordInput"
             className="inputTypeIn"
-            type="email" 
-            name="email" 
-            value={inputs.email || ""} 
+            // maxLength={4} 
+            type="password" 
+            name="password" 
+          value={inputs.password || ""} 
             onChange={handleChange}
-            placeholder="Enter your email:"
-          required
-        />
-        <input
-            id="addressInput"
-            className="inputTypeIn"
-            type="text" 
-            name="address" 
-            value={inputs.address || ""} 
-            onChange={handleChange}
-            placeholder="Enter your address:"
+            placeholder="Enter your password:"
           required
         />
         <input
@@ -133,25 +116,32 @@ const handleSubmit = async (event) => {
           required
         />
         <input
-            id="websiteInput"
+            id="emailInput"
             className="inputTypeIn"
-            type="text" 
-            name="website" 
-            value={inputs.website || ""} 
+            type="email" 
+            name="email" 
+            value={inputs.email || ""} 
             onChange={handleChange}
-            placeholder="Enter your website:"
+            placeholder="Enter your email:"
           required
         />
-        <input
-            id="companyInput"
-            className="inputTypeIn"
-            type="text" 
-            name="company" 
-            value={inputs.company || ""} 
-            onChange={handleChange}
-            placeholder="Enter your company:"
-          required
-        />
+        
+        <div className="profile-picture-container">
+          {profilePictureOptions.map((option) => (
+            <label key={option.value} className="profile-picture-option">
+              <input
+                type="radio"
+                name="profilePictureOption"
+                value={option.value}
+                checked={inputs.profilePictureOption === option.value}
+                onChange={handleChange}
+                required
+              />
+              <img src={option.value} alt={option.label} className="profile-picture-img" style={{ width: '100px', height: '100px' }} />
+            </label>
+          ))}
+        </div>
+
         <input id="registerButton" type="submit" name="submit" value="REGISTER" />
     </form>
     </div>

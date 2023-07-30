@@ -37,6 +37,64 @@ module.exports = (connection) => {
         }
       });
     });
+
+    router.post('/:username', (req, res) => {
+      const user = req.body; // Récupérer les données de l'utilisateur depuis la requête
+      console.log("user register");
+      console.log(user);
+    
+      // if (user) {
+      // Vérifier si le nom d'utilisateur est déjà utilisé
+      connection.query('SELECT * FROM users WHERE username = ?', [user.username], (err, rows) => {
+        if (err) {
+          console.error('Error while executing the query: ', err);
+          res.status(500).send('Error checking username');
+        } else {
+          if (rows.length > 0) {
+            res.status(400).send('Username is already in use');
+          } else {
+            const userToAdd = {
+              id: user.id,
+              name: user.name,
+              email: user.email,
+              address: user.address,
+              phone: user.phone,
+                            
+            };
+    
+            connection.query('INSERT INTO users SET ?', [userToAdd], (err, result) => {
+              if (err) {
+                console.error('Error while executing the query: ', err);
+                res.status(500).send('Error checking username');
+              } else {
+                const userId = result.insertId; // ID de l'utilisateur ajouté
+    
+                // Insérer les informations dans la table users_password
+                const userData = {
+                  id: userId,
+                  username: user.username,
+                  password: user.password
+                };
+    
+                connection.query('INSERT INTO users_password SET ?', [userData], (err, result) => {
+                  if (err) {
+                    console.error('Error while executing the query: ', err);
+                    res.status(500).send('Error checking username');
+                  } else {
+                    res.status(201).send(`User added with ID : ${userId}`);
+                  }
+                });
+              }
+            });
+          }
+        }
+      })
+      // } else {
+      //   res.status(400).send('Invalid user data');
+      // };
+      
+    });
+
   return router;
 };
 
