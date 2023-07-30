@@ -38,7 +38,7 @@ const handleSubmit = async (event) => {
     console.log(inputs);
   
     try {
-      const response = await fetch(`http://localhost:3001/${inputs.username}/users`, {
+      const response = await fetch(`http://localhost:3000/${inputs.username}/users`, {
         method: "POST",
         body: data, // Envoyer les données telles quelles (déjà au format JSON)
         headers: {

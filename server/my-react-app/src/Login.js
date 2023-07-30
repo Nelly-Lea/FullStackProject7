@@ -42,7 +42,7 @@ const handleChange = ({target}) => {
     method: 'GET',
   };
 
-          fetch(`http://localhost:3000/login_user?phone=${phone}&password=${password}`, requestOptions)
+          fetch(`/user?phone=${phone}&password=${password}`, requestOptions)
           .then(res=>{
             console.log(`Status: ${res.status}`);
             console.log('Response headers:', res.headers);

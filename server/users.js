@@ -1,31 +1,11 @@
 const https = require('https');
 const mysql = require('mysql2');
 const express = require('express')
-const app = express()
-const cors = require('cors');
-//app.use(express.static('my-react-app'));
-
-// Configuration de la connexion à la base de données
-const connection = mysql.createConnection({
-    host: "localhost",
-    user: "root",
-    password: "Neraph1902",
-    database: "db_project7"
-});
-
-// Établir la connexion à la base de données
-connection.connect((err) => {
-  if (err) {
-    console.error('Erreur de connexion à la base de données:', err);
-  } else {
-    console.log('Connexion à la base de données réussie!');
-  }
-});
-
-app.use(express.json());
-
+//const app = express()
+console.log('user.js fichier')
+const router = express.Router();
 // Route GET pour récupérer les informations de l'utilisateur
-app.get('/login_user', (req, res) => {
+router.get('/user', (req, res) => {
     const phone = req.query.phone;
     const password = req.query.password;
 
@@ -57,8 +37,4 @@ app.get('/login_user', (req, res) => {
     });
   });
 
-// Démarrer le serveur sur le port souhaité
-const port = 3000;
-app.listen(port, () => {
-  console.log(`Serveur en cours d'exécution sur le port ${port}`);
-});
+  module.exports = router;
