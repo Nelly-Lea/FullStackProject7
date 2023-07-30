@@ -14,18 +14,23 @@ export default function Register() {
   const navigate = useNavigate();
   
 
-const handleChange = ({target}) => {
-    let isValid=true;
-    const {name,value} = target;
-
-    // if (name ==='password'){
-    //     isValid=  validPassword.test(value);
-    // }
-    // if (isValid) {
-    setInputs(values => ({...values, [name]: value}))
-    // }
-
-}
+  const handleChange = ({ target }) => {
+    const { name, value } = target;
+    let newValue = value; // Valeur saisie par l'utilisateur
+  
+    if (name === 'password') {
+      // Valider le mot de passe ici si nécessaire
+    } else if (name === 'phone') {
+      // Valider le numéro de téléphone ici si nécessaire
+    } else if (name === 'status' && value.trim() === '') {
+      // Si le champ "status" est vide, mettez-le par défaut à "available"
+      newValue = 'available';
+    }
+  
+    // Mettre à jour l'état avec la nouvelle valeur
+    setInputs((values) => ({ ...values, [name]: newValue }));
+  };
+  
 
 
 //submit
@@ -141,6 +146,17 @@ const handleSubmit = async (event) => {
             </label>
           ))}
         </div>
+
+        <input
+            id="statusInput"
+            className="inputTypeIn"
+            type="text"
+            name="status" 
+            value={inputs.status || ""} 
+            onChange={handleChange}
+            placeholder="Enter your status:"
+          required
+        />
 
         <input id="registerButton" type="submit" name="submit" value="REGISTER" />
     </form>

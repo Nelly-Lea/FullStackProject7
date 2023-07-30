@@ -43,57 +43,40 @@ module.exports = (connection) => {
       console.log("user register");
       console.log(user);
     
-      // if (user) {
-      // Vérifier si le nom d'utilisateur est déjà utilisé
-      connection.query('SELECT * FROM users WHERE username = ?', [user.username], (err, rows) => {
+      // Vérifier si le numéro de téléphone est déjà utilisé
+      connection.query('SELECT * FROM users WHERE phone = ?', [user.phone], (err, rows) => {
         if (err) {
           console.error('Error while executing the query: ', err);
-          res.status(500).send('Error checking username');
+          res.status(500).send('Error checking phone');
         } else {
           if (rows.length > 0) {
-            res.status(400).send('Username is already in use');
+            res.status(400).send('Phone number is already in use');
           } else {
-            const userToAdd = {
-              id: user.id,
-              name: user.name,
-              email: user.email,
-              address: user.address,
-              phone: user.phone,
-                            
-            };
-    
-            connection.query('INSERT INTO users SET ?', [userToAdd], (err, result) => {
-              if (err) {
-                console.error('Error while executing the query: ', err);
-                res.status(500).send('Error checking username');
-              } else {
-                const userId = result.insertId; // ID de l'utilisateur ajouté
-    
-                // Insérer les informations dans la table users_password
-                const userData = {
-                  id: userId,
-                  username: user.username,
-                  password: user.password
-                };
-    
-                connection.query('INSERT INTO users_password SET ?', [userData], (err, result) => {
-                  if (err) {
-                    console.error('Error while executing the query: ', err);
-                    res.status(500).send('Error checking username');
-                  } else {
-                    res.status(201).send(`User added with ID : ${userId}`);
-                  }
-                });
+            // Insérer l'utilisateur dans la base de données
+            connection.query('INSERT INTO users (name, email, address, phone, status) VALUES (?, ?, ?, ?, ?)',
+              [user.name, user.email, user.address, user.phone, user.status],
+              (err, result) => {
+                if (err) {
+                  console.error('Error while inserting user into the database: ', err);
+                  res.status(500).send('Error inserting user into the database');
+                } else {
+                  const userToAdd = {
+                    id: result.insertId,
+                    name: user.name,
+                    email: user.email,
+                    address: user.address,
+                    phone: user.phone,
+                    status: user.status
+                  };
+                  res.json(userToAdd);
+                }
               }
-            });
+            );
           }
         }
-      })
-      // } else {
-      //   res.status(400).send('Invalid user data');
-      // };
-      
+      });
     });
+    
 
   return router;
 };
