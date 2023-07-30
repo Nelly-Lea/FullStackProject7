@@ -27,7 +27,7 @@ const mysql = require('mysql2');
 const dbConfig = {
   host: "localhost",
   user: "root",
-  password: "Motdepasse17",
+  password: "Neraph1902",
   database: "db_project7"
 };
 

@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from "react";
-
+import "./styles.css";
+//import readedImage from "./images/readed1.jpg";
 export default function NewComment({ comment, onSave, onCancel ,isUpdate,postId}) {
     const [users, setUsers] = useState([]);
     const [messages, setMessages] = useState([]);
     const [showWindow, setShowWindow] = useState(false);
     const [selectedUser, setSelectedUser] = useState(null);
     const currentUser = JSON.parse(localStorage["currentUser"]);
+    //console.log("imggg", readedImage)
 
     const handleUserClick = async (user) => {
         setSelectedUser(user);
@@ -78,11 +80,20 @@ export default function NewComment({ comment, onSave, onCancel ,isUpdate,postId}
           {showWindow && (
             <div>
               {<p>{selectedUser.name}</p>}
-              {messages.map((user) => (
+              {messages.map((msg) => (
+              <li key={msg.id}>
+               {msg.text!==""?  <p>{msg.text}</p>: '' }
+               {msg.image!==""?  <img src={msg.image} className="img_msg"></img>: ''}
+               <p>{msg.date}</p>
+               <p>{msg.hour}</p>
+               <img src="http://www.clipartbest.com/cliparts/dir/LB8/dirLB85i9.png" className="readed_img"></img>
+              </li>
+            ))}
+              {/* {messages.map((user) => (
               <li key={user.id}>
                 <p>{user.name}</p>
               </li>
-            ))}
+            ))} */}
             </div>
           )}
         </div>

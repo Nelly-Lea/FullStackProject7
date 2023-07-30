@@ -15,7 +15,9 @@ module.exports = (connection) => {
 
         console.log(currentId);
         // Faites une requête SQL pour récupérer tous les utilisateurs sauf celui en ligne actuellement
-        connection.query('SELECT * FROM messages WHERE sender = ? && receiver = ?', [currentId,selectedUserId], (err, rows) => {
+        // connection.query('SELECT * FROM messages WHERE sender = ? && receiver = ?', [currentId,selectedUserId], (err, rows) => {
+            connection.query('SELECT * FROM messages WHERE (sender = ? AND receiver = ?) OR (sender = ? AND receiver = ?) ORDER BY date ASC, hour ASC;', [currentId, selectedUserId, selectedUserId, currentId], (err, rows) => {
+                //if (err) {
         if (err) {
             console.error('Erreur lors de l\'exécution de la requête:', err);
             res.status(500).send('Erreur lors de la récupération des utilisateurs');

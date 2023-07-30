@@ -6,7 +6,7 @@
       "text": "Hi, how are you?",
       "date":"2023/7/26",
       "hour": "14:0:38",
-      "image": "",
+      "image": "https://th.bing.com/th/id/R.be1f24385ffa8c7e13958ab0bec87de5?rik=WYIimyuKscQfCQ&pid=ImgRaw&r=0",
       "isItRead": true,
       "isItGroup":false
     },
@@ -20,5 +20,16 @@
         "image": "",
         "isItRead": true,
         "isItGroup":false
-      }
-  ]
+      },
+	   {
+		"id": 3,
+		"sender": 2,
+		"receiver": 3,
+		"text": "",
+		"date":"2023/7/26",
+		"hour": "14:5:38",
+		"image": "https://ih1.redbubble.net/image.1723493551.7241/raf,750x1000,075,t,fafafa:ca443f4786.jpg",
+		"isItRead": true,
+		"isItGroup":false
+	  }
+	]
