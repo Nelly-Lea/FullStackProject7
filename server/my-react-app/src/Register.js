@@ -43,7 +43,7 @@ const handleSubmit = async (event) => {
     console.log(inputs);
   
     try {
-      const response = await fetch(`users/${inputs.username}`, {
+      const response = await fetch(`users/registerUser`, {
         method: "POST",
         body: data, // Envoyer les données telles quelles (déjà au format JSON)
         headers: {
@@ -55,14 +55,16 @@ const handleSubmit = async (event) => {
       console.log("Response headers:", response.headers);
   
   
-      if (response.status === 201) {
+      if (response.status === 200) {
 
         alert("Welcome! You were registered successfully.");
-    
-        navigate('/login');
+        console.log(response);
+        localStorage.setItem('currentUser', JSON.stringify(response));
+        navigate(`/${response.phone}`);
+
       } else {
         console.error(`Request failed with status code ${response.status}`);
-        alert("Username is already in use");
+        alert("Phone is already in use");
       }
     } catch (error) {
       console.error("An error occurred:", error);

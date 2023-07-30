@@ -6,6 +6,7 @@ console.log('user.js fichier')
 const router = express.Router();
 // Route GET pour récupérer les informations de l'utilisateur
 module.exports = (connection) => {
+  //login
   router.get('/user', (req, res) => {
       const phone = req.query.phone;
       const password = req.query.password;
@@ -38,7 +39,8 @@ module.exports = (connection) => {
       });
     });
 
-    router.post('/:username', (req, res) => {
+    //register
+    router.post('/registerUser', (req, res) => {
       const user = req.body; // Récupérer les données de l'utilisateur depuis la requête
       console.log("user register");
       console.log(user);
@@ -50,11 +52,12 @@ module.exports = (connection) => {
           res.status(500).send('Error checking phone');
         } else {
           if (rows.length > 0) {
+            console.log("rows",rows);
             res.status(400).send('Phone number is already in use');
           } else {
             // Insérer l'utilisateur dans la base de données
-            connection.query('INSERT INTO users (name, email, address, phone, status) VALUES (?, ?, ?, ?, ?)',
-              [user.name, user.email, user.address, user.phone, user.status],
+            connection.query('INSERT INTO users (name, phone, email, profil, status, password) VALUES (?, ?, ?, ?, ?, ?)',
+              [user.name, user.phone, user.email, user.profilePictureOption, user.status, user.password],
               (err, result) => {
                 if (err) {
                   console.error('Error while inserting user into the database: ', err);
@@ -64,9 +67,10 @@ module.exports = (connection) => {
                     id: result.insertId,
                     name: user.name,
                     email: user.email,
-                    address: user.address,
                     phone: user.phone,
-                    status: user.status
+                    profil:user.profilePictureOption,
+                    status: user.status,
+                    password:user.password
                   };
                   res.json(userToAdd);
                 }
@@ -77,6 +81,22 @@ module.exports = (connection) => {
       });
     });
     
+  // Route GET pour récupérer tous les utilisateurs sauf celui en ligne actuellement
+  router.get('/AllUsers', (req, res) => {
+    const userData  = JSON.parse(req.query.currentUser);
+    console.log(userData);
+    // Faites une requête SQL pour récupérer tous les utilisateurs sauf celui en ligne actuellement
+    connection.query('SELECT * FROM users WHERE id != ? && name != "Admin"', [userData.id], (err, rows) => {
+      if (err) {
+        console.error('Erreur lors de l\'exécution de la requête:', err);
+        res.status(500).send('Erreur lors de la récupération des utilisateurs');
+      } else {
+        console.log(rows);
+        res.json(rows);
+      }
+    });
+});
+
 
   return router;
 };
