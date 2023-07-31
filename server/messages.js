@@ -30,8 +30,27 @@ module.exports = (connection) => {
 
     //register
     router.post('/addMessage', (req, res) => {
+        const newMsg = req.body; // Extract the new msg data from the request body
       
-    });
+        // Define the SQL query to insert the new msg into the 'messages' table
+        const query = 'INSERT INTO messages SET ?';
+      
+        connection.query(query, [newMsg], (err, results) => {
+          if (err) {
+            // If an error occurs during the query execution, log the error and send a response with an error message
+            console.error('Error in request execution', err);
+            res.status(500); // Set the response status to 500 (Internal Server Error)
+            return res.send({ error: 'An error occurred adding new message' });
+          } else {
+            // Get the ID of the newly inserted message
+            const newMsgId = results.id; // Use "id" instead of "insertId"
+      
+            res.status(200); // Set the response status to 200 (OK)
+            res.send({ id: newMsgId }); // Return the new message's ID in the response
+          }
+        });
+      });
+      
     
   
 
