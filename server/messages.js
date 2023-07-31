@@ -1,7 +1,7 @@
 const https = require('https');
 const mysql = require('mysql2');
 const express = require('express')
-//const app = express()
+const app = express()
 console.log('messages.js fichier')
 const router = express.Router();
 // Route GET pour récupérer les informations de l'utilisateur
@@ -31,7 +31,7 @@ module.exports = (connection) => {
     //register
     router.post('/addMessage', (req, res) => {
         const newMsg = req.body; // Extract the new msg data from the request body
-      
+           
         // Define the SQL query to insert the new msg into the 'messages' table
         const query = 'INSERT INTO messages SET ?';
       

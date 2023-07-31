@@ -114,11 +114,18 @@ export default function NewComment({ comment, onSave, onCancel ,isUpdate,postId}
         text: newMessage,
         date:`${year}-${month}-${day}`,
         hour:`${hours}:${min}:${sec}`,
-        image: selectedImage,
+        // image: selectedImage,
         isItRead:false,
         isItGroup:Isgroup
         // Add any other data needed for the server request
       };
+
+      if (selectedImage) {
+        newMessageData.image = selectedImage;
+      }
+      else{
+        newMessageData.image="";
+      }
     
       try {
         // Send a POST request to the server to add the new message
