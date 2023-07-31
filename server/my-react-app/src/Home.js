@@ -7,6 +7,10 @@ export default function NewComment({ comment, onSave, onCancel ,isUpdate,postId}
     const [showWindow, setShowWindow] = useState(false);
     const [selectedUser, setSelectedUser] = useState(null);
     const currentUser = JSON.parse(localStorage["currentUser"]);
+    const [newMessage, setNewMessage] = useState("");
+    const [selectedImage, setSelectedImage] = useState(null);
+
+    
     //console.log("imggg", readedImage)
 
     const handleUserClick = async (user) => {
@@ -34,17 +38,50 @@ export default function NewComment({ comment, onSave, onCancel ,isUpdate,postId}
       };
       
         
-    const handleInputChange = (event) => {
-    // const { name, value } = event.target;
-    // setFormData((prevData) => ({
-    //     ...prevData,
-    //     [name]: value
-    // }));
+      const handleNewMessageChange = (event) => {
+        setNewMessage(event.target.value);
+      };
+
+      const handleImageChange = (event) => {
+        setSelectedImage(event.target.files[0]);
+      };
+      
+      
+    const handleSubmitNewMessage = async (event) => {
+      event.preventDefault();
+    
+      // Create a new message object with the necessary data
+      const newMessageData = {
+        text: newMessage,
+        image: selectedImage,
+        // Add any other data needed for the server request
+      };
+    
+      try {
+        // Send a POST request to the server to add the new message
+        const response = await fetch("/messages/addMessage", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(newMessageData),
+        });
+    
+        if (response.ok) {
+          // If the server successfully added the message, update the messages list
+          const responseData = await response.json();
+          setMessages([...messages, responseData]);
+          // Clear the new message and selected image after adding
+          setNewMessage("");
+          setSelectedImage(null);
+        } else {
+          console.error("Failed to add the new message.");
+        }
+      } catch (error) {
+        console.error("An error occurred while adding the new message:", error);
+      }
     };
-   
-    const handleSubmit = async (event) => {
-       
-    };
+    
 
     const fetchUsers = async () => {
         try {
@@ -89,11 +126,21 @@ export default function NewComment({ comment, onSave, onCancel ,isUpdate,postId}
                <img src="http://www.clipartbest.com/cliparts/dir/LB8/dirLB85i9.png" className="readed_img"></img>
               </li>
             ))}
-              {/* {messages.map((user) => (
-              <li key={user.id}>
-                <p>{user.name}</p>
-              </li>
-            ))} */}
+            {selectedUser && (
+              <form onSubmit={handleSubmitNewMessage}>
+                <textarea
+                  value={newMessage}
+                  onChange={handleNewMessageChange}
+                  placeholder="Write a new message..."
+                />
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageChange}
+                />
+                <button type="submit">Send</button>
+              </form>
+            )}
             </div>
           )}
         </div>
