@@ -29,7 +29,7 @@ module.exports = (connection) => {
     });
 
     //register
-    router.post('/registerUser', (req, res) => {
+    router.post('/addMessage', (req, res) => {
       
     });
     
