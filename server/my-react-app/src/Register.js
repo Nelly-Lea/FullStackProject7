@@ -58,9 +58,10 @@ const handleSubmit = async (event) => {
       if (response.status === 200) {
 
         alert("Welcome! You were registered successfully.");
-        console.log(response);
-        localStorage.setItem('currentUser', JSON.stringify(response));
-        navigate(`/${response.phone}`);
+        const res=await response.json();
+        console.log("client",res);
+        localStorage.setItem('currentUser', JSON.stringify(res));
+        navigate(`/${res.phone}`);
 
       } else {
         console.error(`Request failed with status code ${response.status}`);
