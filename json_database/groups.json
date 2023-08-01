@@ -2,7 +2,7 @@
   {
     "id": 1,
     "adminId": 2,
-    "participantsId": [3],
+    "participantsId": [3,2],
     "title": "Full Stack Project",
     "profil": "https://2.bp.blogspot.com/-UkzdMoOT5VM/V9M86trdM-I/AAAAAAAACfo/6n9F1bQ8xLIuy8426-X2Zta6v7lFVDoMwCLcB/s1600/3.jpg",
     "description": "the goal of life is not the hope of being perfect but the will to be always better. Ralph Waldo Emerson"
