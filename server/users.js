@@ -81,21 +81,54 @@ module.exports = (connection) => {
       });
     });
     
-  // Route GET pour récupérer tous les utilisateurs sauf celui en ligne actuellement
-  router.get('/AllUsers', (req, res) => {
-    const userData  = JSON.parse(req.query.currentUser);
-    console.log(userData);
-    // Faites une requête SQL pour récupérer tous les utilisateurs sauf celui en ligne actuellement
-    connection.query('SELECT * FROM users WHERE id != ? && name != "Admin"', [userData.id], (err, rows) => {
-      if (err) {
-        console.error('Erreur lors de l\'exécution de la requête:', err);
-        res.status(500).send('Erreur lors de la récupération des utilisateurs');
-      } else {
-        console.log(rows);
-        res.json(rows);
-      }
-    });
+//   // Route GET pour récupérer tous les utilisateurs sauf celui en ligne actuellement
+//   router.get('/AllUsers', (req, res) => {
+//     const userData  = JSON.parse(req.query.currentUser);
+//     console.log(userData);
+//     // Faites une requête SQL pour récupérer tous les utilisateurs sauf celui en ligne actuellement
+//     connection.query('SELECT * FROM users WHERE id != ? && name != "Admin"', [userData.id], (err, rows) => {
+//       if (err) {
+//         console.error('Erreur lors de l\'exécution de la requête:', err);
+//         res.status(500).send('Erreur lors de la récupération des utilisateurs');
+//       } else {
+//         console.log(rows);
+//         res.json(rows);
+//       }
+//     });
+// });
+
+// Route GET pour récupérer tous les utilisateurs sauf celui en ligne actuellement
+router.get('/AllUsers', (req, res) => {
+  const userData = JSON.parse(req.query.currentUser);
+  console.log(userData);
+
+  // Faites une requête SQL pour récupérer tous les utilisateurs sauf celui en ligne actuellement
+  connection.query('SELECT * FROM users WHERE id != ? && name != "Admin"', [userData.id], (err, rows) => {
+    if (err) {
+      console.error('Erreur lors de l\'exécution de la requête:', err);
+      res.status(500).send('Erreur lors de la récupération des utilisateurs');
+    } else {
+      console.log(rows);
+
+      // Récupérer les groupes depuis la base de données qui contiennent l'id du currentUser dans la liste des participantsId
+      connection.query('SELECT * FROM chat_groups WHERE JSON_CONTAINS(participantsId, ?)', [JSON.stringify(userData.id)], (err, groupRows) => {
+        if (err) {
+          console.error('Erreur lors de l\'exécution de la requête:', err);
+          res.status(500).send('Erreur lors de la récupération des groupes');
+        } else {
+          console.log(groupRows);
+
+          // Concaténer la liste filtrée des groupes avec la liste des utilisateurs récupérés depuis la base de données
+          const combinedData = [...rows, ...groupRows];
+
+          res.json(combinedData);
+        }
+      });
+    }
+  });
 });
+
+
 
 
   return router;

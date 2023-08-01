@@ -10,7 +10,7 @@ app.use(express.json());
 const connection = mysql.createConnection({
     host: "localhost",
     user: "root",
-    password: "Motdepasse17",
+    password: "Neraph1902",
     database: "db_project7"
 });
 
@@ -29,12 +29,12 @@ const usersRouter = require('./users')(connection);
 //console.log(usersRouter);
 const messagesRouter = require('./messages')(connection); // Import the messages.js file
 // const groupsRouter = require('./groups'); // Import the groups.js file
-// const flaggedMsgRouter = require('./flagged_msg'); // Import the flagged_msg.js file
+ const flaggedMsgRouter = require('./flagged_msg.js')(connection); // Import the flagged_msg.js file
 
 app.use('/users', usersRouter); // Set route for users
 app.use('/messages', messagesRouter); // Set route for messages
 // app.use('/groups', groupsRouter); // Set route for groups
-// app.use('/flagged_msg', flaggedMsgRouter); // Set route for flagged_msg
+ app.use('/flagged_msg', flaggedMsgRouter); // Set route for flagged_msg
 
 
 // Démarrer le serveur sur le port souhaité
