@@ -97,8 +97,8 @@ module.exports = (connection) => {
 //     });
 // });
 
-// Route GET pour récupérer tous les utilisateurs sauf celui en ligne actuellement
-router.get('/AllUsers', (req, res) => {
+// Route GET pour récupérer tous les utilisateurs et les groupes sauf celui en ligne actuellement
+router.get('/AllUsersAndGroups', (req, res) => {
   const userData = JSON.parse(req.query.currentUser);
   console.log(userData);
 
@@ -124,6 +124,24 @@ router.get('/AllUsers', (req, res) => {
           res.json(combinedData);
         }
       });
+    }
+  });
+});
+
+router.get('/AllUsers', (req, res) => {
+  const userData = JSON.parse(req.query.currentUser);
+  console.log(userData);
+
+  // Faites une requête SQL pour récupérer tous les utilisateurs sauf celui en ligne actuellement
+  connection.query('SELECT * FROM users WHERE id != ? && name != "Admin"', [userData.id], (err, rows) => {
+    if (err) {
+      console.error('Erreur lors de l\'exécution de la requête:', err);
+      res.status(500).send('Erreur lors de la récupération des utilisateurs');
+    } else {
+      //console.log(rows);
+      res.json(rows);
+      
+      
     }
   });
 });

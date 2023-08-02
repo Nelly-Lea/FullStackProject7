@@ -28,12 +28,12 @@ connection.connect((err) => {
 const usersRouter = require('./users')(connection);
 //console.log(usersRouter);
 const messagesRouter = require('./messages')(connection); // Import the messages.js file
-// const groupsRouter = require('./groups'); // Import the groups.js file
+ const chat_groupsRouter = require('./chat_groups')(connection); // Import the groups.js file
  const flaggedMsgRouter = require('./flagged_msg.js')(connection); // Import the flagged_msg.js file
 
 app.use('/users', usersRouter); // Set route for users
 app.use('/messages', messagesRouter); // Set route for messages
-// app.use('/groups', groupsRouter); // Set route for groups
+ app.use('/chat_groups', chat_groupsRouter); // Set route for groups
  app.use('/flagged_msg', flaggedMsgRouter); // Set route for flagged_msg
 
 

@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from "react";
 import "./styles.css";
+import { useNavigate } from "react-router-dom";
+//import Image from "./images/readed.png"
 //import fetch from 'node-fetch'; // Importez la bibliothèque fetch ou utilisez une autre bibliothèque de requêtes HTTP
 
 //import readedImage from "./images/readed1.jpg";
-export default function NewComment({ comment, onSave, onCancel ,isUpdate,postId}) {
+export default function Home() {
     const [users, setUsers] = useState([]);
     const [messages, setMessages] = useState([]);
     const [showWindow, setShowWindow] = useState(false);
@@ -16,6 +18,7 @@ export default function NewComment({ comment, onSave, onCancel ,isUpdate,postId}
     const [FlaggedMessages, setFlaggedMessage] = useState([]);
     const [MessagesToEditId, setMessageToEditId] = useState(null);
     const [editedMessage, setEditedMessage] = useState("");
+    const navigate = useNavigate();
     
     //console.log("imggg", readedImage)
 
@@ -185,7 +188,7 @@ export default function NewComment({ comment, onSave, onCancel ,isUpdate,postId}
 
     const fetchUsers = async () => {
         try {
-          const response = await fetch(`/users/AllUsers?currentUser=${encodeURIComponent(localStorage["currentUser"])}`); // Appeler la route GET que vous avez créée
+          const response = await fetch(`/users/AllUsersAndGroups?currentUser=${encodeURIComponent(localStorage["currentUser"])}`); // Appeler la route GET que vous avez créée
           if (response.ok) {
             const usersData = await response.json();
             setUsers(usersData); // Mettre à jour la variable d'état 'users' avec les utilisateurs récupérés
@@ -324,6 +327,11 @@ export default function NewComment({ comment, onSave, onCancel ,isUpdate,postId}
         console.error("An error occurred while adding the new flagged message:", error);
       }
     }
+
+    const AddNewGroup=async()=>{
+      navigate(`/new_group`); 
+
+    }
       useEffect(() => {
         fetchUsers();
       }, []);
@@ -333,14 +341,12 @@ export default function NewComment({ comment, onSave, onCancel ,isUpdate,postId}
       <div className="container">
           <div className="left-div">
           <h1>Contacts</h1>
-          {/* <ul>
-            {users.map((user) => ({("phone" in user)? 
-              <li key={user.id}>
-                <button onClick={() => handleUserClick(user)}>{user.name}</button>
-              </li>:<li key={user.id}> <button onClick={() => handleGroupClick(user)}>{user.title}</button></li> 
-            ))}
-          </ul>
-     */}
+         <div>
+          <div>
+            <p>Hi {currentUser.name}</p>
+          </div>
+          <button onClick={() => AddNewGroup()}>New Group</button>
+         </div>
           <ul>
           {users.map((user) => (
             "phone" in user ? (
@@ -385,7 +391,7 @@ export default function NewComment({ comment, onSave, onCancel ,isUpdate,postId}
           {/* <p>{msg.hour.slice(0, 5)}:{msg.hour.slice(6).padStart(2, "0")}</p> */}
            <p>{msg.hour}</p>
           {msg.isItRead ? (
-            <img src="http://www.clipartbest.com/cliparts/dir/LB8/dirLB85i9.png" className="readed_img" alt="Read" />
+            <img src="http://www.clipartbest.com/cliparts/dir/LB8/dirLB85i9.png"  className="readed_img" alt="Read" />
           ) : (
             <img src="https://clipart-library.com/new_gallery/7-71944_green-tick-transparent-transparent-tick.png" className="readed_img" alt="Not read" />
           )}
