@@ -62,7 +62,6 @@ const handleChange = ({target}) => {
               }
         })
         .then(user=>{
-            console.log('User:', user);
             alert('You are logged in');
             localStorage.setItem('currentUser', JSON.stringify(user));
             navigate(`/${user.phone}`);
