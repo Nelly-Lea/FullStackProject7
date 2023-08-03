@@ -163,3 +163,46 @@ html, body {
     }
   }
 }
+
+/*style for add NewGroup page*/
+
+.add_user_to_group_list{
+    list-style-type: none;
+}
+
+
+.remove_add_user_icon{
+    width: 20px;
+    height: 20px;
+   
+   
+    
+}
+.img_contact_add_group{
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+}
+.contact_container{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  align-content: flex-start;
+}
+
+.container-group {
+    display: flex;
+  }
+
+.left-div-group {
+    flex-basis: 20%;
+    background-color: lightblue;
+    min-height: 100vh;
+  }
+  
+  .right-div-group {
+    flex-basis: 80%;
+    background-color: lightgreen;
+    min-height: 100vh;
+  }

@@ -9,6 +9,7 @@ import { useState ,useEffect } from "react";
 
 export default function NewGroup() {
     const [users, setUsers] = useState([]);
+    const [UsersAddedId, setUsersAddedId] = useState([]);
     const [UsersAdded, setUsersAdded] = useState([]);
     const [inputs, setInputs] = useState({});
     const currentUser = JSON.parse(localStorage["currentUser"]);
@@ -48,7 +49,8 @@ const profilePictureOptions = [
   ];
 
   const AddUserToGroup = async (user) => {
-  setUsersAdded([...UsersAdded, user.id]);
+  setUsersAddedId([...UsersAddedId, user.id]);
+  setUsersAdded([...UsersAdded, user]);
   }
 
   const handleChange = ({ target }) => {
@@ -76,8 +78,8 @@ const profilePictureOptions = [
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    setUsersAdded([...UsersAdded, currentUser.id]);
-    const participantsIdString = JSON.stringify([...UsersAdded, currentUser.id]);
+    setUsersAddedId([...UsersAddedId, currentUser.id]);
+    const participantsIdString = JSON.stringify([...UsersAddedId, currentUser.id]);
     inputs["participantsId"] = participantsIdString;
    // inputs["participantsId"] = JSON.stringify(UsersAdded);
     inputs["adminId"]=currentUser.id;
@@ -117,25 +119,52 @@ const profilePictureOptions = [
       console.error("An error occurred:", error);
     }
   };
+  const RemoveAddUser = async (user) => {
+    const updatedUsersAdded = UsersAdded.filter((user_added) => user_added.id !== user.id);
+    setUsersAdded(updatedUsersAdded);
+    const updatedUsersAddedId = UsersAddedId.filter((user_addedId) => user_addedId.id !== user.id);
+    setUsersAddedId(updatedUsersAddedId);
+
+  }
 
   useEffect(() => {
     fetchUsers();
   }, []);
     return (
-        <div>
-            <p>Create a New Group</p>
-            <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit}>
+           <div  className="container-group">
+            
+        
+            <div className="left-div-group">
+            <p>Contacts: </p>
             {users.map((user) => (
-              <li key={user.id}>
-                <button onClick={() => AddUserToGroup(user)}>
-                    <div>
-                        <p>{user.name}</p>
-                        <span></span>
+              <li key={user.id} className="add_user_to_group_list">
+                    <div className="contact_container" onClick={() => AddUserToGroup(user)}>
+                    <span><img src={user.profil} className="img_contact_add_group"></img></span>
+                        <span >{user.name}</span>
                     </div>
-                </button>
+              </li>
+           
+            
+          ))}
+           </div>
+           <div className="right-div-group">
+            <div>
+            <p>Create a New Group</p>
+                <p>Users added:</p>
+                {UsersAdded.map((user) => (
+              <li key={user.id} className="add_user_to_group_list">
+                    <div className="contact_container">
+                        <span><img src={user.profil} className="img_contact_add_group"></img></span>
+                        <span >{user.name}</span>
+                        <span >
+                            <img src="https://img.icons8.com/?size=512&id=6483&format=png" onClick={()=>RemoveAddUser(user)} className="remove_add_user_icon"></img>
+                        </span>
+                    </div>
               </li>
             
           ))}
+            </div>
             <input
                 id="titleInput"
                 className="inputTypeIn"
@@ -167,8 +196,11 @@ const profilePictureOptions = [
             </label>
           ))}
         </div>
-        <input id="CreateButton" type="submit" name="submit" value="Create Group" />  
-            </form>
+        <input id="CreateButton" type="submit" name="submit" value="Create Group" />
+        </div>  
         </div>
+         </form>
+
+       
     );
 }
