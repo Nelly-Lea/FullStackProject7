@@ -1,0 +1,16 @@
+/* Admin.css */
+.admin-container {
+    display: flex;
+  }
+  
+  .menu {
+    flex: 1;
+    background-color: #f0f0f0;
+    padding: 20px;
+  }
+  
+  .content {
+    flex: 2;
+    padding: 20px;
+  }
+  
