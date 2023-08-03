@@ -7,6 +7,7 @@ import Login from "./Login";
 import Register from "./Register";
 import NoPage from "./NoPage";
 import NewGroup from "./NewGroup";
+import Admin from "./Admin";
 
 // import './Style.css';
 
@@ -19,7 +20,7 @@ export default function App() {
             <Route path="/register" element={<Register/>} />
             <Route path="/:phone" element={<Home/>} />
             <Route path="new_group" element={<NewGroup/>} />
-            
+            <Route path="/admin" element={<Admin/>} />
             
             <Route path="*" element={<NoPage />} />
 
