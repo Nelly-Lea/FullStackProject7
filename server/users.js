@@ -100,7 +100,7 @@ module.exports = (connection) => {
 // Route GET pour récupérer tous les utilisateurs et les groupes sauf celui en ligne actuellement
 router.get('/AllUsersAndGroups', (req, res) => {
   const userData = JSON.parse(req.query.currentUser);
-  console.log(userData);
+  // console.log(userData);
 
   // Faites une requête SQL pour récupérer tous les utilisateurs sauf celui en ligne actuellement
   connection.query('SELECT * FROM users WHERE id != ? && name != "Admin"', [userData.id], (err, rows) => {
@@ -108,7 +108,7 @@ router.get('/AllUsersAndGroups', (req, res) => {
       console.error('Erreur lors de l\'exécution de la requête:', err);
       res.status(500).send('Erreur lors de la récupération des utilisateurs');
     } else {
-      console.log(rows);
+      // console.log(rows);
 
       // Récupérer les groupes depuis la base de données qui contiennent l'id du currentUser dans la liste des participantsId
       connection.query('SELECT * FROM chat_groups WHERE JSON_CONTAINS(participantsId, ?)', [JSON.stringify(userData.id)], (err, groupRows) => {
@@ -116,7 +116,7 @@ router.get('/AllUsersAndGroups', (req, res) => {
           console.error('Erreur lors de l\'exécution de la requête:', err);
           res.status(500).send('Erreur lors de la récupération des groupes');
         } else {
-          console.log(groupRows);
+          // console.log(groupRows);
 
           // Concaténer la liste filtrée des groupes avec la liste des utilisateurs récupérés depuis la base de données
           const combinedData = [...rows, ...groupRows];
@@ -128,23 +128,22 @@ router.get('/AllUsersAndGroups', (req, res) => {
   });
 });
 
-router.get('/AllUsers', (req, res) => {
-  const userData = JSON.parse(req.query.currentUser);
-  console.log(userData);
+  router.get('/AllUsers', (req, res) => {
+    // const userData = JSON.parse(req.query.currentUser);
+    // console.log(userData);
 
-  // Faites une requête SQL pour récupérer tous les utilisateurs sauf celui en ligne actuellement
-  connection.query('SELECT * FROM users WHERE id != ? && name != "Admin"', [userData.id], (err, rows) => {
-    if (err) {
-      console.error('Erreur lors de l\'exécution de la requête:', err);
-      res.status(500).send('Erreur lors de la récupération des utilisateurs');
-    } else {
-      //console.log(rows);
-      res.json(rows);
-      
-      
-    }
+    // Faites une requête SQL pour récupérer tous les utilisateurs sauf celui en ligne actuellement
+    connection.query('SELECT * FROM users WHERE name != "Admin"', (err, rows) => {
+      if (err) {
+        console.error('Erreur lors de l\'exécution de la requête:', err);
+        res.status(500).send('Erreur lors de la récupération des utilisateurs');
+      } else {
+        // console.log(rows);
+        res.json(rows);
+        
+      }
+    });
   });
-});
 
 
 

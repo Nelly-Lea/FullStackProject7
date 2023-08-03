@@ -64,7 +64,11 @@ const handleChange = ({target}) => {
         .then(user=>{
             alert('You are logged in');
             localStorage.setItem('currentUser', JSON.stringify(user));
-            navigate(`/${user.phone}`);
+            if(user.name==="Admin"){
+              navigate(`/admin`);
+            }else{
+              navigate(`/${user.phone}`);
+            }
         })
         .catch(error=>{
             console.error('An error occurred:', error);
