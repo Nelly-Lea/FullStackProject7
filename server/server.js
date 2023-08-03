@@ -10,7 +10,7 @@ app.use(express.json());
 const connection = mysql.createConnection({
     host: "localhost",
     user: "root",
-    password: "Neraph1902",
+    password: "Motdepasse17",
     database: "db_project7"
 });
 
@@ -35,7 +35,6 @@ app.use('/users', usersRouter); // Set route for users
 app.use('/messages', messagesRouter); // Set route for messages
  app.use('/chat_groups', chat_groupsRouter); // Set route for groups
  app.use('/flagged_msg', flaggedMsgRouter); // Set route for flagged_msg
-
 
 // Démarrer le serveur sur le port souhaité
 const port = 3000;
