@@ -127,7 +127,12 @@ const profilePictureOptions = [
             <form onSubmit={handleSubmit}>
             {users.map((user) => (
               <li key={user.id}>
-                <button onClick={() => AddUserToGroup(user)}>{user.name}</button>
+                <button onClick={() => AddUserToGroup(user)}>
+                    <div>
+                        <p>{user.name}</p>
+                        <span></span>
+                    </div>
+                </button>
               </li>
             
           ))}
