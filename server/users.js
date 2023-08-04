@@ -128,6 +128,22 @@ router.get('/AllUsersAndGroups', (req, res) => {
   });
 });
 
+
+// Route pour récupérer tous les utilisateurs sauf celui en ligne actuellement avec l'utilisateur actuel
+router.get('/AllUsersWithCurrentUser', (req, res) => {
+  const userData = JSON.parse(req.query.currentUser);
+
+  connection.query('SELECT * FROM users WHERE id != ? AND name != "Admin"', [userData.id], (err, rows) => {
+    if (err) {
+      console.error('Erreur lors de l\'exécution de la requête:', err);
+      res.status(500).send('Erreur lors de la récupération des utilisateurs');
+    } else {
+      res.json(rows);
+    }
+  });
+});
+
+  
   router.get('/AllUsers', (req, res) => {
     // const userData = JSON.parse(req.query.currentUser);
     // console.log(userData);

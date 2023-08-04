@@ -18,7 +18,7 @@ export default function NewGroup() {
 //import ReactDOM from "react-dom/client";
 const fetchUsers = async () => {
     try {
-      const response = await fetch(`/users/AllUsers?currentUser=${encodeURIComponent(localStorage["currentUser"])}`); // Appeler la route GET que vous avez créée
+      const response = await fetch(`/users/AllUsersWithCurrentUser?currentUser=${encodeURIComponent(localStorage["currentUser"])}`); // Appeler la route GET que vous avez créée
       if (response.ok) {
         const usersData = await response.json();
         setUsers(usersData); // Mettre à jour la variable d'état 'users' avec les utilisateurs récupérés
