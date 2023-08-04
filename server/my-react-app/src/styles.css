@@ -31,17 +31,26 @@ html, body {
   }
   
   .left-div {
-    flex-basis: 20%;
+    flex-basis: 30%;
     background-color: lightblue;
     min-height: 100vh;
   }
   
   .right-div {
-    flex-basis: 80%;
+    flex-basis: 70%;
     background-color: lightgreen;
     min-height: 100vh;
   }
 
+  .ul_list_contact{
+    margin: 0;
+    margin-left: 5px;
+    padding: 0;
+  }
+  .contact_list{
+    list-style-type: none;
+    margin-left: 0px;
+  }
   /* tjs dans Home design des msg*/
   /* Ajoutez ces styles pour .sender-right */
 .sender-right {
@@ -178,7 +187,7 @@ html, body {
    
     
 }
-.img_contact_add_group{
+.img_contact{
     width: 40px;
     height: 40px;
     border-radius: 50%;
@@ -196,13 +205,92 @@ html, body {
   }
 
 .left-div-group {
-    flex-basis: 20%;
+    flex-basis: 30%;
     background-color: lightblue;
     min-height: 100vh;
   }
   
   .right-div-group {
-    flex-basis: 80%;
+    flex-basis: 70%;
     background-color: lightgreen;
     min-height: 100vh;
+  }
+
+  /*style of ContactProfile page*/
+
+   .img_contact_display_info{
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+   }
+   /* .contact_info_div{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  } */
+
+  .info_user_txt{
+    justify-content: center;
+  } 
+
+  .main_content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+  }
+  
+  .contact_info_div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+  }
+  
+  .contact_info_title {
+    font-size: 20px;
+    margin-bottom: 10px;
+  }
+  
+  .user_info_container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+  }
+  
+  .user_info {
+    display: flex;
+    flex-direction: column; /* Afficher les éléments en colonne */
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .user_details {
+    display: flex;
+    flex-direction: column; /* Afficher les éléments en colonne */
+    align-items: center;
+  }
+  
+  
+  .user_status {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 20px;
+  }
+  
+  .info_title {
+    font-weight: bold;
+  }
+  
+  .info_content {
+    margin-top: 10px;
+  }
+  
+  .returnToHome{
+    width: 40px;
+    height: 40px;
   }

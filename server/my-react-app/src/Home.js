@@ -340,6 +340,15 @@ export default function Home() {
       navigate(`/new_group`); 
 
     }
+    const DisplayProfilContact=async()=>{
+      //navigate(`/new_group`); 
+      navigate(`/contact_profil/${selectedUser.id}`)
+      //return null;
+
+    }
+    const DisplayYourInfos=async()=>{
+      return null;
+    }
       useEffect(() => {
         fetchUsers();
       }, []);
@@ -350,20 +359,32 @@ export default function Home() {
           <div className="left-div">
           <h1>Contacts</h1>
          <div>
-          <div>
+          {/* <div>
             <p>Hi {currentUser.name}</p>
-          </div>
+          </div> */}
+           <div className="contact_container" onClick={() => DisplayYourInfos()}>
+                    <span><img src={currentUser.profil} className="img_contact"></img></span>
+                        <span >{currentUser.name}</span>
+                    </div>
           <button onClick={() => AddNewGroup()}>New Group</button>
          </div>
-          <ul>
+          <ul className="ul_list_contact">
           {users.map((user) => (
             "phone" in user ? (
-              <li key={user.id}>
-                <button onClick={() => handleUserClick(user)}>{user.name}</button>
+              <li key={user.id} className="contact_list">
+                {/* <button onClick={() => handleUserClick(user)}>{user.name}</button> */}
+                <div className="contact_container" onClick={() => handleUserClick(user)}>
+                    <span><img src={user.profil} className="img_contact"></img></span>
+                        <span >{user.name}</span>
+                    </div>
               </li>
             ) : (
-              <li key={user.id}>
-                <button onClick={() => handleGroupClick(user)}>{user.title}</button>
+              <li key={user.id} className="contact_list">
+                {/* <button onClick={() => handleGroupClick(user)}>{user.title}</button> */}
+                <div className="contact_container" onClick={() => handleGroupClick(user)}>
+                    <span><img src={user.profil} className="img_contact"></img></span>
+                        <span >{user.title}</span>
+                    </div>
               </li>
             )
           ))}
@@ -373,7 +394,13 @@ export default function Home() {
           {/* Condition pour afficher la fenêtre vide */}
           {showWindow && (
             <div>
-              {<p>{selectedUser.name}</p>}
+              <div>
+              {/* <p>{selectedUser.name}</p> */}
+              <div className="contact_container" onClick={() => DisplayProfilContact()}>
+                    <span><img src={selectedUser.profil} className="img_contact"></img></span>
+                        {"phone" in selectedUser ? <span >{selectedUser.name}</span>:<span>{selectedUser.title}</span>}
+                    </div>
+              </div>
               {messages.map((msg) => (
         <li
           key={msg.id}

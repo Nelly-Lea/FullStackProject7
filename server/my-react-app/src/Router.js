@@ -8,6 +8,7 @@ import Register from "./Register";
 import NoPage from "./NoPage";
 import NewGroup from "./NewGroup";
 import Admin from "./Admin";
+import ContactProfil from "./ContactProfil";
 
 // import './Style.css';
 
@@ -19,6 +20,7 @@ export default function App() {
             <Route path="/" element={<Login/>} />
             <Route path="/register" element={<Register/>} />
             <Route path="/:phone" element={<Home/>} />
+             <Route path="contact_profil/:id" element={<ContactProfil/>}/>
             <Route path="new_group" element={<NewGroup/>} />
             <Route path="/admin" element={<Admin/>} />
             

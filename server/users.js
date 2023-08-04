@@ -162,6 +162,30 @@ router.get('/AllUsersWithCurrentUser', (req, res) => {
   });
 
 
+  //GET user according user id
+  router.get('/UserInfo', (req, res) => {
+    const userId = req.query.UserId;
+    console.log(userId)
+   // Create an SQL query with a prepared parameter
+   const query = 'SELECT * FROM users WHERE id = ?';
+ 
+   // Execute the SQL query with the parameter
+   connection.query(query, [userId], (err, results) => {
+     if (err) {
+       console.error('Error in request execution', err);
+       res.status(500); // Set the response status to 500 (Internal Server Error)
+       return res.send({ error: 'An error occurred while retrieving user details.' });
+     }
+ 
+     
+     // If the query executed successfully without any errors
+     // Send the response with the details of the user
+     const user = results[0]; 
+     console.log("user infos",user);
+     res.json(user); // Send the new user as a response
+   });
+ });
+
 
 
   return router;

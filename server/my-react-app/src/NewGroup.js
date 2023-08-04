@@ -140,7 +140,7 @@ const profilePictureOptions = [
             {users.map((user) => (
               <li key={user.id} className="add_user_to_group_list">
                     <div className="contact_container" onClick={() => AddUserToGroup(user)}>
-                    <span><img src={user.profil} className="img_contact_add_group"></img></span>
+                    <span><img src={user.profil} className="img_contact"></img></span>
                         <span >{user.name}</span>
                     </div>
               </li>
@@ -155,7 +155,7 @@ const profilePictureOptions = [
                 {UsersAdded.map((user) => (
               <li key={user.id} className="add_user_to_group_list">
                     <div className="contact_container">
-                        <span><img src={user.profil} className="img_contact_add_group"></img></span>
+                        <span><img src={user.profil} className="img_contact"></img></span>
                         <span >{user.name}</span>
                         <span >
                             <img src="https://img.icons8.com/?size=512&id=6483&format=png" onClick={()=>RemoveAddUser(user)} className="remove_add_user_icon"></img>
