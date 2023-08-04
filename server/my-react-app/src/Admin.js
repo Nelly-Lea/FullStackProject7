@@ -4,23 +4,120 @@ import React, { useState,useEffect  } from "react";
 export default function Admin() {
   const [selectedChoice, setSelectedChoice] = useState(null);
   const [users, setUsers] = useState([]);
-  const [Flagged_msg, setFlagged_msg]=useState([]);
-  const [Checked_msg, setChecked_msg] = useState([]);
+  const [Flagged_msg, setFlagged_msg]=useState([]); //tous les messages a verifier
+  const [Flagged_msgChecked, setFlagged_msgChecked]=useState([]); //tous les messages quon sest occupe
+  const [msg_kept, setMsg_kept] = useState([]); //ceux quon a gardes
+  const [deleted_msg, setDeleted_msg] = useState([]); //ceux quon a delete
+  const [showAllCheckedMsg, setShowAllCheckedMsg] = useState(false);
+  const [showKept, setShowKept] = useState(false);
+  const [showDeleted, setShowDeleted] = useState(false);
+
 
   useEffect(() => {
-    fetchUsers();
-    fetchFlagged_msg();
-    fetchChecked_msg();
+    AllFlagged();
   }, []);
       
  
   const handleChoiceClick = (choice) => {
     setSelectedChoice(choice);
+    if(choice==="contacts"){
+        handleChoiceContacts();
+    }
+    // else if(choice==="messages to check"){
+    //     handleChoiceFlaggedMsg();
+    // }
+    // else{
+    //     handleChoiceAllFlagged();
+    // }
+    
+
   };
 
-   
-  const handleUserClick = async (user) => {
+  const handleChoiceContacts =async () => {
+    console.log("users",users);
+    if(users.length===0){
+        try {
+        const response = await fetch(`/users/AllUsers`);
+        if (response.ok) {
+            const usersData = await response.json();
+            setUsers(usersData);
+        } else {
+            console.error(`Request failed with status code ${response.status}`);
+        }
+        } catch (error) {
+        console.error('An error occurred:', error);
+        }
+    }
+  };
 
+  const handleChoiceFlaggedMsg= async() => {
+    // if(Flagged_msg.length===0){
+    //     try {
+    //         const response = await fetch(`/flagged_msg/getAllFlaggedMsg`); // Appeler la route GET que vous avez créée
+    //         if (response.ok) {
+    //         const flagged_msgData = await response.json();
+    //         setAllFlagged_msg(flagged_msgData); // Mettre à jour la variable d'état 'users' avec les utilisateurs récupérés
+    //     } else {
+    //         console.error(`Request failed with status code ${response.status}`);
+    //         }
+    //     } catch (error) {
+    //         console.error('An error occurred:', error);
+    //     }
+    // }
+  };
+
+  const handleChoiceAllFlagged=()=>{
+
+  };
+
+  const AllFlagged = async () => {
+    let flagged_msgData = [];
+  
+    if (Flagged_msg.length === 0) {
+      try {
+        const response = await fetch(`/flagged_msg/getAllFlaggedMsg`);
+        if (response.ok) {
+          flagged_msgData = await response.json();
+
+        } else {
+          console.error(`Request failed with status code ${response.status}`);
+        }
+      } catch (error) {
+        console.error('An error occurred:', error);
+      }
+    } else {
+      flagged_msgData = Flagged_msg;
+    }
+    
+    const newFlaggedMsg = [];
+    const newFlaggedMsgChecked = [];
+    const newMsgKept = [];
+    const newDeletedMsg = [];
+    
+    flagged_msgData.forEach((flaggedMsg) => {
+
+        console.log("res",flaggedMsg.checked);
+
+        if (flaggedMsg.checked === 0) {
+            newFlaggedMsg.push(flaggedMsg);
+        } else if (flaggedMsg.checked === 1 && flaggedMsg.deleted === 0) {
+            newFlaggedMsgChecked.push(flaggedMsg);
+            newMsgKept.push(flaggedMsg);
+        } else if (flaggedMsg.checked === 1 && flaggedMsg.deleted === 1) {
+            newFlaggedMsgChecked.push(flaggedMsg);
+            newDeletedMsg.push(flaggedMsg);
+        }
+    });
+  
+    setFlagged_msg(newFlaggedMsg);
+    setFlagged_msgChecked(newFlaggedMsgChecked);
+    setMsg_kept(newMsgKept);
+    setDeleted_msg(newDeletedMsg);
+  };
+  
+
+  const handleUserClick = async (user) => {
+    
   }
 
   const handleKeepClick = async (flagged_msg) => {
@@ -31,7 +128,8 @@ export default function Admin() {
   
       if (response.ok) {
         setFlagged_msg(prevFlaggedMsg => prevFlaggedMsg.filter(msg => msg.id !== flagged_msg.id));
-        setChecked_msg(prevCheckedMsg => [...prevCheckedMsg, flagged_msg]);
+        setFlagged_msgChecked(prevCheckedMsg => [...prevCheckedMsg, flagged_msg]);
+        setMsg_kept(prevCheckedMsg => [...prevCheckedMsg, flagged_msg]);
 
       } else {
         console.error(`Request failed with status code ${response.status}`);
@@ -50,7 +148,8 @@ export default function Admin() {
 
     if (response.ok) {
         setFlagged_msg(prevFlaggedMsg => prevFlaggedMsg.filter(msg => msg.id !== flagged_msg.id));
-        setChecked_msg(prevCheckedMsg => [...prevCheckedMsg, flagged_msg]);
+        setFlagged_msgChecked(prevCheckedMsg => [...prevCheckedMsg, flagged_msg]);
+        setDeleted_msg(prevCheckedMsg => [...prevCheckedMsg, flagged_msg]);
     } else {
       console.error(`Request failed with status code ${response.status}`);
     }
@@ -73,35 +172,6 @@ export default function Admin() {
   );
 
  
-  const fetchUsers = async () => {
-    console.log("fetchUsers");
-    try {
-      const response = await fetch(`/users/AllUsers`); // Appeler la route GET que vous avez créée
-      if (response.ok) {
-        const usersData = await response.json();
-        setUsers(usersData); // Mettre à jour la variable d'état 'users' avec les utilisateurs récupérés
-    } else {
-        console.error(`Request failed with status code ${response.status}`);
-      }
-    } catch (error) {
-      console.error('An error occurred:', error);
-    }
-  };
-
-  const fetchFlagged_msg = async () => {
-    try {
-      const response = await fetch(`/flagged_msg/getAllFlagged_msg?checked=false`); // Appeler la route GET que vous avez créée
-      if (response.ok) {
-        const flagged_msgData = await response.json();
-        setFlagged_msg(flagged_msgData); // Mettre à jour la variable d'état 'users' avec les utilisateurs récupérés
-    } else {
-        console.error(`Request failed with status code ${response.status}`);
-      }
-    } catch (error) {
-      console.error('An error occurred:', error);
-    }
-  };
-
 
   const Content2 = () => (
     <div>
@@ -116,42 +186,83 @@ export default function Admin() {
   );
 
   
-  const fetchChecked_msg = async () => {
-    try {
-      const response = await fetch(`/flagged_msg/getAllChecked_msg?checked=true`); // Appeler la nouvelle route GET créée
-      if (response.ok) {
-        const checked_msgData = await response.json();
-        setChecked_msg(checked_msgData); // Mettre à jour l'état avec les messages vérifiés
-      } else {
-        console.error(`Request failed with status code ${response.status}`);
-      }
-    } catch (error) {
-      console.error('An error occurred:', error);
-    }
+  const handleShowAllMessagesClick = () => {
+    console.log("All messages",Flagged_msgChecked);
+
+    setShowAllCheckedMsg(true);
+    setShowKept(false);
+    setShowDeleted(false);
+  };
+  const handleShowKeptMessagesClick = () => {
+    console.log("messages gardes",msg_kept);
+
+    setShowAllCheckedMsg(false);
+    setShowKept(true);
+    setShowDeleted(false);
+  };
+  const handleShowDeletedMessagesClick = () => {
+    console.log("deleted",deleted_msg);
+
+    setShowAllCheckedMsg(false);
+    setShowKept(false);
+    setShowDeleted(true);
   };
   
-  const Content3 = () => (
+const Content3 = () => (
     <div>
-      {Checked_msg.map((checked_msg) => (
-        <li key={checked_msg.id}>
-          <p>{checked_msg.text}</p>
-        </li>
-      ))}
+      <div>
+        <button onClick={() => handleShowAllMessagesClick()}>Show All Messages</button>
+        <button onClick={() => handleShowKeptMessagesClick()}>Show Kept Messages</button>
+        <button onClick={() => handleShowDeletedMessagesClick()}>Show Deleted Messages</button>
+      </div>
+  
+      {showAllCheckedMsg && (
+        <div>
+          <h3>Messages Checked</h3>
+          {Flagged_msgChecked.map((kept_msg) => (
+            <li key={kept_msg.id}>
+              <p>{kept_msg.text}</p>
+            </li>
+          ))}
+        </div>
+      )}
+      
+      {showKept && (
+        <div>
+          <h3>Kept Messages</h3>
+          {msg_kept.map((kept_msg) => (
+            <li key={kept_msg.id}>
+              <p>{kept_msg.text}</p>
+            </li>
+          ))}
+        </div>
+      )}
+      
+      {showDeleted && (
+        <div>
+          <h3>Deleted Messages</h3>
+          {deleted_msg.map((deleted_msg) => (
+            <li key={deleted_msg.id}>
+              <p>{deleted_msg.text}</p>
+            </li>
+          ))}
+        </div>
+      )}
     </div>
   );
-
+  
   return (
     <div className="admin-container">
       <div className="menu">
         <button onClick={() => handleChoiceClick("contacts")}>contacts</button>
         <button onClick={() => handleChoiceClick("messages to check")}>messages to check</button>
-        <button onClick={() => handleChoiceClick("keeped messages")}>keeped messages</button>
+        <button onClick={() => handleChoiceClick("messages kept")}>messages kept</button>
       </div>
 
       <div className="content">
         {selectedChoice === "contacts" && <Content1 />}
         {selectedChoice === "messages to check" && <Content2 />}
-        {selectedChoice === "keeped messages" && <Content3 />}
+        {selectedChoice === "messages kept" && <Content3 />}
       </div>
     </div>
   );

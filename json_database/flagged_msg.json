@@ -1,7 +1,15 @@
 [
   {
     "id": 1,
-    "msgId": 1,
-    "checked": false
+    "msgId":1,
+    "sender": 2,
+    "receiver": 3,
+    "text": "Hi, how are you?",
+    "date":"2023/7/26",
+    "hour": "14:0:38",
+    "image": "https://th.bing.com/th/id/R.be1f24385ffa8c7e13958ab0bec87de5?rik=WYIimyuKscQfCQ&pid=ImgRaw&r=0",
+    "isItGroup":false,
+    "checked":false,
+    "deleted":false
   }
 ]

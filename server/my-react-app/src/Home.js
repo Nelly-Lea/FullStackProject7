@@ -297,12 +297,20 @@ export default function Home() {
     };
     
      
-    const handleReportMessage=async(msgId)=>{
+    const handleReportMessage=async(msg)=>{
       const newFlaggedMessage = {
-       msgId:msgId,
-       checked:false
+       msgId:msg.id,
+       checked:false,
+       sender:msg.sender,
+       receiver:msg.receiver,
+       text:msg.text,
+       date: new Date(msg.date).toISOString().slice(0, 19).replace('T', ' '), // Format the date
+       hour:msg.hour,
+       image:msg.image,
+       isItGroup:msg.isItGroup,
+       deleted:false
       };
-
+      console.log(newFlaggedMessage);
       try {
         // Send a POST request to the server to add the new message
         const response = await fetch("/flagged_msg/addFlaggedMessage", {
@@ -405,7 +413,7 @@ export default function Home() {
             <div className="message-menu">
               <button onClick={() => handleDeleteMessage(msg.id)}>Delete</button>
              { msg.sender==currentUser.id ? <button onClick={() => handleEditMessage(msg.id, msg.text)}>Modify</button>:null}
-             { msg.sender==selectedUser.id ? <button onClick={() => handleReportMessage(msg.id)}>Report</button>:null}
+             { msg.sender==selectedUser.id ? <button onClick={() => handleReportMessage(msg)}>Report</button>:null}
             </div>
           )}
         </li>
