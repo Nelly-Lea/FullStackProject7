@@ -44,7 +44,7 @@ html, body {
 
   .ul_list_contact{
     margin: 0;
-    margin-left: 5px;
+    margin: 15px;
     padding: 0;
   }
   .contact_list{
@@ -73,10 +73,10 @@ html, body {
   }
   
   /* Ajoutez ces styles pour .msg_list */
-  .msg_list {
+  /* .msg_list {
     list-style-type: none;
     margin-bottom: 10px;
-  }
+  } */
   
   /* .sender-right {
     text-align: right;
@@ -86,7 +86,7 @@ html, body {
     /* border-radius: 25px;
     padding-right: 10px;
    
-  } */ */
+  } */ 
   /* .sender-left {
     text-align: left;
     margin-left: 10px;
@@ -95,10 +95,14 @@ html, body {
     /* border-radius: 25px;
     padding-left: 10px;
     
-  } */ */
+  } */
   .msg_list{
     list-style-type: none;
-    margin-bottom: 10px;
+    /* margin-bottom: 20px;
+    margin-top: 20px; */
+    display: flex;
+    align-items: center;
+    
   }
   
   .speech-wrapper{
@@ -111,11 +115,20 @@ html, body {
     border-radius: 4px;
     /* box-shadow: 2px 8px 5px #000; */
     position: relative;
-    margin: 0 0 25px;
+    /* margin: 0 0 25px;  */
+    margin-left: 0px;
+    align-items: start;
+    margin-top: 50px;
+    margin-bottom: 50px;
     
     &.alt{
       /* margin: 0 0 0 60px; */
-      margin: 0 15px 0 auto;
+      /* margin: 0 15px 0 auto; */
+      margin: auto;
+      align-items:end;
+      margin-right: 0px;
+      margin-top: 50px;
+      margin-bottom: 50px;
     }
     .txt{
       padding: 8px 55px 8px 14px;
@@ -171,6 +184,11 @@ html, body {
       transform: rotate(45deg) scaleY(-1);
     }
   }
+}
+
+.flagged_icon{
+    width: 15px;
+    height: 15px;
 }
 
 /*style for add NewGroup page*/

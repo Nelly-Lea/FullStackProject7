@@ -107,6 +107,36 @@ module.exports = (connection) => {
           }
         });
       });
+
+    // DELETE flagged_msg
+    router.delete('/id', (req, res) => {
+
+        let msgId = req.query.id;  
+        
+        
+        // Define the SQL query to delete a flagged_msg with the given id
+        const query = `DELETE FROM flagged_msg  WHERE msgId = ?`;
+      
+        // Execute the SQL query with the msgId as a parameter
+        connection.query(query, msgId, (error, results) => {
+          if (error) {
+            // If an error occurs during the query execution, log the error and send a response with an error message
+            console.error('Error in request execution', error);
+            res.status(500); // Set the response status to 500 (Internal Server Error)
+            return res.send({ error: 'error occured while deleting flagged message' });
+          }
+      
+          // Check if any rows were affected by the delete operation
+          if (results.affectedRows === 0) {
+            // If no rows were affected, send a response with an error message
+            return res.send({ error: 'flagged message not found' });
+          }
+      
+          // If a row was affected (flagged message deleted), send a response with the deleted todoId
+          res.status(200); //Set the response status to 200 (OK)
+          res.send(msgId); 
+        });
+      });  
       
     return router;
 };

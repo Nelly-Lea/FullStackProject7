@@ -102,16 +102,19 @@ async function createMessagesTableAndInsertData() {
         hour TIME,
         image VARCHAR(255),
         isItRead BOOLEAN,
-        isItGroup BOOLEAN
+        isItGroup BOOLEAN,
+        modified BOOLEAN,
+        flagged BOOLEAN
+
       )
     `);
 
     // Insert data into the "messages" table
     for (const message of messagesArray) {
-      const { id, sender, receiver, text, date, hour, image, isItRead, isItGroup } = message;
+      const { id, sender, receiver, text, date, hour, image, isItRead, isItGroup, modified, flagged } = message;
       await executeQuery(`
-        INSERT INTO messages (id, sender, receiver, text, date, hour, image, isItRead, isItGroup)
-        VALUES (${id}, '${sender}', '${receiver}', '${text}', '${date}', '${hour}', '${image}', ${isItRead}, ${isItGroup})
+        INSERT INTO messages (id, sender, receiver, text, date, hour, image, isItRead, isItGroup, modified, flagged)
+        VALUES (${id}, '${sender}', '${receiver}', '${text}', '${date}', '${hour}', '${image}', ${isItRead}, ${isItGroup}, ${modified}, ${flagged})
       `);
     }
     console.log('Messages data inserted successfully.');

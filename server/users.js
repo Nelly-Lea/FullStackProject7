@@ -186,6 +186,42 @@ router.get('/AllUsersWithCurrentUser', (req, res) => {
    });
  });
 
+// Updating user profil PUT
+ router.put('/profil', (req, res) => {
+
+
+  const userId = req.query.id; 
+ 
+  const userName = req.query.name;
+  const userStatus = req.query.status;
+  const userPassword = req.query.password;
+  const userEmail = req.query.email;
+  const userProfil = req.query.profil;
+ 
+
+ 
+  const query = `UPDATE users SET name = ?, email = ?, profil = ?, status = ?, password = ? WHERE id = ?`;
+
+  // Execute the SQL query with the msgId as a parameter
+  connection.query(query, [userName,userEmail,userProfil,userStatus,userPassword,userId ], (error, results) => {
+    if (error) {
+      // If an error occurs during the query execution, log the error and send a response with an error message
+      console.error('Error in request execution', error);
+      res.status(500); // Set the response status to 500 (Internal Server Error)
+      return res.send({ error: 'An error occurred while updating the user field.' });
+    }
+
+    // Check if the update query affected any rows in the database
+    if (results.affectedRows === 0) {
+      
+      return res.send({ error: 'user not found' });
+    }
+
+    // If the update was successful, send a response with the updated title
+    res.status(200); //Set the response status to 200 (OK)
+    res.json(userId); 
+  });
+});
 
 
   return router;

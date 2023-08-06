@@ -53,10 +53,19 @@ module.exports = (connection) => {
     //register
     router.post('/addMessage', (req, res) => {
         const newMsg = req.body; // Extract the new msg data from the request body
-           
+        // const sender=req.body.sender;
+        // const receiver=req.body.receiver;
+        // const text=req.body.text;
+        // const date=req.body.date;
+        // const hour=req.body.hour;
+        // const image=req.body.image;
+        // const isItRead=req.body.isItRead;
+        // const text=req.body.text;
         // Define the SQL query to insert the new msg into the 'messages' table
         const query = 'INSERT INTO messages SET ?';
-      
+       // const query1 = 'SELECT * FROM messages WHERE  (sender= ?) AND (receiver=?) AND (text=?) AND (date=?) AND hour=?) AND (image=?) AND (isItRead=?) AND (isItGroup=?)';
+        //const query1='SELECT max(id) FROM messages'
+        const query1 = 'SELECT * FROM messages WHERE id = ?';
         connection.query(query, [newMsg], (err, results) => {
           if (err) {
             // If an error occurs during the query execution, log the error and send a response with an error message
@@ -64,16 +73,23 @@ module.exports = (connection) => {
             res.status(500); // Set the response status to 500 (Internal Server Error)
             return res.send({ error: 'An error occurred adding new message' });
           } else {
-            // Get the ID of the newly inserted message
-            const newMsgId = results.id; // Use "id" instead of "insertId"
-      
-            res.status(200); // Set the response status to 200 (OK)
-            res.send({ id: newMsgId }); // Return the new message's ID in the response
+            const newMsgId = results.insertId; // Get the ID of the newly inserted message
+        
+            connection.query(query1, [newMsgId], (err, results1) => {
+              if (err) {
+                console.error('Error in request execution', err);
+                res.status(500);
+                return res.send({ error: 'An error occurred getting message' });
+              }
+        
+              const newMessage = results1[0]; // Retrieve the newly inserted message details
+              res.status(200).send(newMessage);
+            });
           }
         });
       });
 
-   // PUT a msg => update msg
+   // PUT a msg text => update msg
    router.put('/text', (req, res) => {
 
     // Extract the msgId and msgText from the request query parameters
@@ -140,6 +156,77 @@ module.exports = (connection) => {
       res.send(msgId); 
     });
   });
+
+  router.put('/flagged', (req, res) => {
+
+    // Extract the msgId and flagged from the request query parameters
+    const msgId = req.query.id; 
+   // const msgFlagged = req.query.flagged ; 
+    const msgFlagged = req.query.flagged === 'true' ? 1 : 0;
+    // Log the msgId and flagged to the console for debugging purposes
+    console.log(msgId);
+    console.log(msgFlagged);
+  
+   // Define the SQL query to update the flagged of the message item with the given msgId
+    const query = `UPDATE messages SET flagged='${msgFlagged}' WHERE id = ?`;
+  
+    // Execute the SQL query with the msgId as a parameter
+    connection.query(query, msgId, (error, results) => {
+      if (error) {
+        // If an error occurs during the query execution, log the error and send a response with an error message
+        console.error('Error in request execution', error);
+        res.status(500); // Set the response status to 500 (Internal Server Error)
+        return res.send({ error: 'An error occurred while updating the flagged field.' });
+      }
+  
+      // Check if the update query affected any rows in the database
+      if (results.affectedRows === 0) {
+        // If no rows were affected, send a response with an error message
+        return res.send({ error: 'message not found' });
+      }
+  
+      // If the update was successful, send a response with the updated title
+      res.status(200); //Set the response status to 200 (OK)
+      res.json(msgFlagged); 
+    });
+  });
+
+  router.put('/modified', (req, res) => {
+
+    // Extract the msgId and modified from the request query parameters
+    const msgId = req.query.id; 
+   
+    const msgModified = req.query.modified === 'true' ? 1 : 0;
+    // Log the msgId and modified to the console for debugging purposes
+    console.log(msgId);
+    console.log(msgModified);
+  
+   // Define the SQL query to update the flagged of the message item with the given msgId
+    const query = `UPDATE messages SET modified='${msgModified}' WHERE id = ?`;
+  
+    // Execute the SQL query with the msgId as a parameter
+    connection.query(query, msgId, (error, results) => {
+      if (error) {
+        // If an error occurs during the query execution, log the error and send a response with an error message
+        console.error('Error in request execution', error);
+        res.status(500); // Set the response status to 500 (Internal Server Error)
+        return res.send({ error: 'An error occurred while updating the modified field.' });
+      }
+  
+      // Check if the update query affected any rows in the database
+      if (results.affectedRows === 0) {
+        // If no rows were affected, send a response with an error message
+        return res.send({ error: 'message not found' });
+      }
+  
+      // If the update was successful, send a response with the updated title
+      res.status(200); //Set the response status to 200 (OK)
+      res.json(msgModified); 
+    });
+  });
+  
+
+  
   
       
     

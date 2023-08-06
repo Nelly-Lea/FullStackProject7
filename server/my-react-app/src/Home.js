@@ -19,6 +19,8 @@ export default function Home() {
     const [MessagesToEditId, setMessageToEditId] = useState(null);
     const [editedMessage, setEditedMessage] = useState("");
     const navigate = useNavigate();
+    const audio = new Audio("/audio/msg_bell.wav");
+  
     
     //console.log("imggg", readedImage)
 
@@ -146,7 +148,9 @@ export default function Home() {
         hour:`${hours}:${min}:${sec}`,
         // image: selectedImage,
         isItRead:false,
-        isItGroup:Isgroup
+        isItGroup:Isgroup,
+        modified:false,
+        flagged:false
         // Add any other data needed for the server request
       };
 
@@ -171,7 +175,7 @@ export default function Home() {
           // If the server successfully added the message, update the messages list
           //const responseData = await response.json();
           const NewMsgId = await response.json();
-          newMessageData["id"] = NewMsgId;
+          newMessageData["id"] = NewMsgId.id;
           setMessages([...messages, newMessageData]);
           // setMessages([...messages, responseData]);
           // Clear the new message and selected image after adding
@@ -183,6 +187,7 @@ export default function Home() {
       } catch (error) {
         console.error("An error occurred while adding the new message:", error);
       }
+      audio.play();
     };
     
 
@@ -225,6 +230,36 @@ export default function Home() {
     const handleEditMessage=async(msgId, msgText)=>{
       setEditedMessage(msgText);
       setMessageToEditId(msgId)
+      try {
+        const response = await fetch(
+          `/messages/modified?id=${msgId}&modified=${true}`,
+          {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+        if (!response.ok) {
+          throw new Error("Request failed for updating messages");
+        }
+        const contentType = response.headers.get("Content-Type");
+        if (contentType && contentType.includes("application/json")) {
+          const data = await response.json();
+          console.log(data);
+          setMessages(prevState => {
+            // Loop over your list
+            return prevState.map((item) => {
+                // Check for the item with the specified id and update it
+                return item.id === msgId ? {...item, modified: data} : item
+            })
+        })
+        }
+       
+        
+      } catch (error) {
+        console.error("Error:", error);
+      }
      
     }
 
@@ -334,6 +369,88 @@ export default function Home() {
       } catch (error) {
         console.error("An error occurred while adding the new flagged message:", error);
       }
+
+      try {
+        const response = await fetch(
+          `/messages/flagged?id=${msg.id}&flagged=${true}`,
+          {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+        if (!response.ok) {
+          throw new Error("Request failed for updating messages");
+        }
+        const contentType = response.headers.get("Content-Type");
+        if (contentType && contentType.includes("application/json")) {
+          const data = await response.json();
+          console.log(data);
+          setMessages(prevState => {
+            // Loop over your list
+            return prevState.map((item) => {
+                // Check for the item with the specified id and update it
+                return item.id === msg.id ? {...item, flagged: data} : item
+            })
+        })
+        }
+       
+        
+      } catch (error) {
+        console.error("Error:", error);
+      }
+    }
+
+    const RemoveReport=async(msgId)=>{
+      try {
+        const response = await fetch(`/flagged_msg/id?id=${msgId}`, {
+          method: "DELETE",
+        });
+        if (!response.ok) {
+          throw new Error("Request failed for deleting flagged message");
+        }
+        const data = await response.json();
+        console.log(data);
+        setFlaggedMessage((prevMsg) => {
+          return prevMsg.filter((flagged_msg) =>flagged_msg.id !== msgId);
+        });
+       
+      } catch (error) {
+        console.error("Error:", error);
+      }
+
+      try {
+        const response = await fetch(
+          `/messages/flagged?id=${msgId}&flagged=${false}`,
+          {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+        if (!response.ok) {
+          throw new Error("Request failed for updating messages");
+        }
+        const contentType = response.headers.get("Content-Type");
+        if (contentType && contentType.includes("application/json")) {
+          const data = await response.json();
+          console.log(data);
+          setMessages(prevState => {
+            // Loop over your list
+            return prevState.map((item) => {
+                // Check for the item with the specified id and update it
+                return item.id === msgId ? {...item, flagged: data} : item
+            })
+        })
+        }
+       
+        
+      } catch (error) {
+        console.error("Error:", error);
+      }
+
     }
 
     const AddNewGroup=async()=>{
@@ -347,7 +464,7 @@ export default function Home() {
 
     }
     const DisplayYourInfos=async()=>{
-      return null;
+      navigate(`/your_profil`)
     }
       useEffect(() => {
         fetchUsers();
@@ -395,8 +512,8 @@ export default function Home() {
           {showWindow && (
             <div>
               <div>
-              {/* <p>{selectedUser.name}</p> */}
-              <div className="contact_container" onClick={() => DisplayProfilContact()}>
+              {/* <p>{selectedUser.name}</p> */} 
+              <div className="contact_container" onClick={() => DisplayProfilContact()}>{/* a droite c'est bubble alt=> moi */}
                     <span><img src={selectedUser.profil} className="img_contact"></img></span>
                         {"phone" in selectedUser ? <span >{selectedUser.name}</span>:<span>{selectedUser.title}</span>}
                     </div>
@@ -410,13 +527,16 @@ export default function Home() {
 
            {/* Afficher le champ d'édition si le message est en cours d'édition */}
            {msg.id === MessagesToEditId ? (
-            <form onSubmit={(event) => handleSubmitEdit(event, msg.id)}>
-              <textarea
-                value={editedMessage}
-                onChange={(event) => setEditedMessage(event.target.value)}
-              />
-              <button type="submit">Save</button>
-            </form>
+            <div>
+             <form onSubmit={(event) => handleSubmitEdit(event, msg.id)}>
+             <textarea
+               value={editedMessage}
+               onChange={(event) => setEditedMessage(event.target.value)}
+             />
+             <button type="submit">Save</button>
+           </form>
+           <div className={`${msg.sender == currentUser.id ? "bubble-arrow alt" : "bubble-arrow"}`}></div>
+           </div>
           ) : (
             // Sinon, afficher le texte du message
             <>
@@ -431,6 +551,8 @@ export default function Home() {
             <img src="https://clipart-library.com/new_gallery/7-71944_green-tick-transparent-transparent-tick.png" className="readed_img" alt="Not read" />
           )}
            {/* <div class="bubble-arrow"></div> */}
+           {msg.sender!=currentUser.id&&msg.flagged ?<img src="https://image.similarpng.com/very-thumbnail/2021/06/Attention-sign-icon.png" className="flagged_icon" onClick={()=>RemoveReport(msg.id)}/>:null}
+           {msg.sender==currentUser.id && msg.modified ?<p>Modified</p>:null}
            <div className={`${msg.sender == currentUser.id ? "bubble-arrow alt" : "bubble-arrow"}`}></div>
           </>
           )}
@@ -439,7 +561,7 @@ export default function Home() {
           {DisplayMenu && SelectedMessageId === msg.id && (
             <div className="message-menu">
               <button onClick={() => handleDeleteMessage(msg.id)}>Delete</button>
-             { msg.sender==currentUser.id ? <button onClick={() => handleEditMessage(msg.id, msg.text)}>Modify</button>:null}
+             {msg.image==""&& msg.sender==currentUser.id ? <button onClick={() => handleEditMessage(msg.id, msg.text)}>Modify</button>:null}
              { msg.sender==selectedUser.id ? <button onClick={() => handleReportMessage(msg)}>Report</button>:null}
             </div>
           )}
@@ -463,6 +585,7 @@ export default function Home() {
                     <img src={selectedImage} alt="Selected Image" className="selected_image_newMsg" />
                   )}
                 <button type="submit">Send</button>
+              
               </form>
             )}
             </div>
