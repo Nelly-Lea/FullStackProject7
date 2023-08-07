@@ -19,11 +19,21 @@ export default function Home() {
     const [FlaggedMessages, setFlaggedMessage] = useState([]);
     const [MessagesToEditId, setMessageToEditId] = useState(null);
     const [editedMessage, setEditedMessage] = useState("");
+    // const [countMessagesUnread, setCountMessagesUnread] = useState([]);
+    const [searchValue, setSearchValue] = useState("");
+
     const navigate = useNavigate();
-    const audio = new Audio("audio/msg_bell.wav");
+    // const audio = new Audio("audio/msg_bell.wav");
     const cookies = new Cookies();
 
-  
+    const handleSearchChange = (event) => {
+      setSearchValue(event.target.value);
+    };
+    
+    const filteredUsers = users.filter((user) =>
+      user.name && user.name.toLowerCase().includes(searchValue.toLowerCase())
+    );
+
     
     //console.log("imggg", readedImage)
 
@@ -47,9 +57,47 @@ export default function Home() {
         } catch (error) {
           console.error('An error occurred:', error);
         }
-      
+
+        markMessagesAsRead(currentUser.id, user.id);
+
         setShowWindow(true);
       };
+
+          
+      const markMessagesAsRead = async (currentUserId, selectedUserId) => {
+        try {
+          const response = await fetch('/messages/markMessagesAsRead', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              currentUserId,
+              selectedUserId
+            })
+          });
+      
+          if (response.ok) {
+            console.log('Messages marked as read');
+      
+            // Mettre à jour les messages dans l'état local (messages)
+            const updatedMessages = messages.map(msg => ({
+              ...msg,
+              isItRead: true
+            }));
+            updateMessages(updatedMessages);
+          } else {
+            console.error(`Request failed with status code ${response.status}`);
+          }
+        } catch (error) {
+          console.error('An error occurred:', error);
+        }
+      };
+
+      const updateMessages = (updatedMessages) => {
+        setMessages(updatedMessages);
+      };
+
       const handleGroupClick = async (group) => {
         const groupId=group.id;
         setSelectedUser(group);
@@ -190,7 +238,7 @@ export default function Home() {
       } catch (error) {
         console.error("An error occurred while adding the new message:", error);
       }
-      audio.play();
+      // audio.play();
     };
     
 
@@ -207,6 +255,7 @@ export default function Home() {
           console.error('An error occurred:', error);
         }
       };
+
     const handleMessageClick= async(msgId)=>{
       setSelectedMessageId(msgId);
       setDisplayMenu(!DisplayMenu);
@@ -367,8 +416,14 @@ export default function Home() {
           setFlaggedMessage([...FlaggedMessages,newFlaggedMessage]) // a voir si on en a besoin
          
         } else {
-          console.error("Failed to add the new flagged message.");
-        }
+          // if(response.status===409)
+          // {
+          //   console.log("this message is already flagged.")
+          // }
+          // else{
+            console.error("Failed to add the new flagged message.");
+          }
+        // }
       } catch (error) {
         console.error("An error occurred while adding the new flagged message:", error);
       }
@@ -479,7 +534,9 @@ export default function Home() {
         fetchUsers();
       }, []);
       
-    
+
+            
+
       return (
       <div className="container">
           <div className="left-div">
@@ -496,8 +553,17 @@ export default function Home() {
           <span><img src="https://icon-library.com/images/logout-icon-png/logout-icon-png-20.jpg" onClick={()=>LogOut()} className="log_out_icon"></img></span>       
           <button onClick={() => AddNewGroup()}>New Group</button>
          </div>
+         <input
+            type="text"
+            placeholder="Search..."
+            value={searchValue}
+            onChange={handleSearchChange}
+            className="search-bar"
+        />
+
           <ul className="ul_list_contact">
-          {users.map((user) => (
+          {filteredUsers.map((user) => (
+          // {users.map((user) => (
             "phone" in user ? (
               <li key={user.id} className="contact_list">
                 {/* <button onClick={() => handleUserClick(user)}>{user.name}</button> */}
@@ -515,6 +581,7 @@ export default function Home() {
                     </div>
               </li>
             )
+          // ))}
           ))}
         </ul>
         </div>
@@ -529,7 +596,7 @@ export default function Home() {
                         {"phone" in selectedUser ? <span >{selectedUser.name}</span>:<span>{selectedUser.title}</span>}
                     </div>
               </div>
-              {messages.map((msg) => (
+        {messages.map((msg) => (
         <li
           key={msg.id}
           className={`${msg.sender == currentUser.id ? "sender-right bubble alt" : "sender-left bubble"} msg_list `}
@@ -573,7 +640,7 @@ export default function Home() {
             <div className="message-menu">
               <button onClick={() => handleDeleteMessage(msg.id)}>Delete</button>
              {msg.image==""&& msg.sender==currentUser.id ? <button onClick={() => handleEditMessage(msg.id, msg.text)}>Modify</button>:null}
-             { msg.sender==selectedUser.id ? <button onClick={() => handleReportMessage(msg)}>Report</button>:null}
+             { msg.sender==selectedUser.id && msg.flagged== false ? <button onClick={() => handleReportMessage(msg)}>Report</button>:null}
             </div>
           )}
         </li>

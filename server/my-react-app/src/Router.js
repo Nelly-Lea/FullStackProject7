@@ -17,7 +17,8 @@ export default function App() {
   return (
     <BrowserRouter>
         <Routes>
-            <Route path="/" element={<Login/>} />
+            <Route path="/" element={<Navigate to="/login" replace />} />
+            <Route path="/login" element={<Login/>} />
             <Route path="/register" element={<Register/>} />
             <Route path="/:phone" element={<Home/>} />
              <Route path="contact_profil/:id" element={<ContactProfil/>}/>

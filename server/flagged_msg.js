@@ -6,27 +6,27 @@ console.log('flagged_msg.js fichier')
 const router = express.Router();
 // Route GET pour récupérer les informations de l'utilisateur
 module.exports = (connection) => {
-    router.post('/addFlaggedMessage', (req, res) => {
-        const newFlaggedMsg = req.body; // Extract the new msg data from the request body
-           
-        // Define the SQL query to insert the new flagged msg into the 'flagged_msg' table
-        const query = 'INSERT INTO flagged_msg SET ?';
-      
-        connection.query(query, [newFlaggedMsg], (err, results) => {
-          if (err) {
-            // If an error occurs during the query execution, log the error and send a response with an error message
-            console.error('Error in request execution', err);
-            res.status(500); // Set the response status to 500 (Internal Server Error)
+  router.post('/addFlaggedMessage', (req, res) => {
+    const newFlaggedMsg = req.body; // Extract the new msg data from the request body
+
+    // Directly insert the new message into the 'flagged_msg' table
+    const insertQuery = 'INSERT INTO flagged_msg SET ?';
+
+    connection.query(insertQuery, [newFlaggedMsg], (insertErr, results) => {
+        if (insertErr) {
+            console.error('Error in request execution', insertErr);
+            res.status(500);
             return res.send({ error: 'An error occurred adding new flagged message' });
-          } else {
-            // Get the ID of the newly inserted message
-            const newFlaggedMsgId = results.id; 
-      
-            res.status(200); // Set the response status to 200 (OK)
-            res.send({ id: newFlaggedMsgId }); // Return the new flagged message's ID in the response
-          }
-        });
-      });
+        } else {
+            const newFlaggedMsgId = results.insertId;
+
+            res.status(200);
+            res.send({ id: newFlaggedMsgId });
+        }
+    });
+});
+
+
 
       router.get('/getAllFlaggedMsg', (req, res) => {
         // Faites une requête SQL pour récupérer tous les messages flaggés (checked = true)
@@ -68,21 +68,30 @@ module.exports = (connection) => {
       // });
       
    
-
       router.post('/markMessageChecked/:messageId', (req, res) => {
         const messageId = req.params.messageId;
-      
+    
         // Faites une requête SQL pour mettre à jour la variable checked du message flaggé avec l'ID spécifié
-        const query = 'UPDATE flagged_msg SET checked = true WHERE msgId = ?';
-        connection.query(query, [messageId], (err, result) => {
-          if (err) {
-            console.error('Erreur lors de l\'exécution de la requête:', err);
-            res.status(500).send('Erreur lors de la mise à jour de la variable checked');
-          } else {
-            res.status(200).send('Variable checked mise à jour avec succès');
-          }
+        const updateFlaggedMsgQuery = 'UPDATE flagged_msg SET checked = true WHERE msgId = ?';
+        connection.query(updateFlaggedMsgQuery, [messageId], (updateErr, updateResult) => {
+            if (updateErr) {
+                console.error('Erreur lors de l\'exécution de la requête:', updateErr);
+                res.status(500).send('Erreur lors de la mise à jour de la variable checked');
+            } else {
+                // Une fois la mise à jour de flagged_msg réussie, mettez à jour le tableau message
+                const updateMessageQuery = 'UPDATE messages SET flagged = false WHERE id = ?';
+                connection.query(updateMessageQuery, [messageId], (updateMessageErr, updateMessageResult) => {
+                    if (updateMessageErr) {
+                        console.error('Erreur lors de la mise à jour du message:', updateMessageErr);
+                        res.status(500).send('Erreur lors de la mise à jour du message');
+                    } else {
+                        res.status(200).send('Variable checked mise à jour avec succès et flagged message mis à jour');
+                    }
+                });
+            }
         });
-      });
+    });
+    
       
       router.post('/deleteFlaggedMessage/:messageId', (req, res) => {
         const messageId = req.params.messageId;

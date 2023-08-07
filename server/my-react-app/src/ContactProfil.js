@@ -29,7 +29,12 @@ export default function ContactProfil() {
     }
 
     const ReturnToHome = async () => {
-     navigate(`/${currentUser.phone}`)
+      if(currentUser.name==="Admin"){
+        navigate(`/admin`);
+      }
+      else{
+        navigate(`/${currentUser.phone}`);
+      }
     }
   
   useEffect(() => {

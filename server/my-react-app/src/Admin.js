@@ -1,8 +1,10 @@
 import React, { useState,useEffect  } from "react";
 // import "./Admin.css";
+import { useNavigate } from "react-router-dom";
+
 
 export default function Admin() {
-  const [selectedChoice, setSelectedChoice] = useState(null);
+  const [selectedChoice, setSelectedChoice] = useState("contacts"); // Initialisation avec "contacts"
   const [users, setUsers] = useState([]);
   const [Flagged_msg, setFlagged_msg]=useState([]); //tous les messages a verifier
   const [Flagged_msgChecked, setFlagged_msgChecked]=useState([]); //tous les messages quon sest occupe
@@ -11,10 +13,12 @@ export default function Admin() {
   const [showAllCheckedMsg, setShowAllCheckedMsg] = useState(false);
   const [showKept, setShowKept] = useState(false);
   const [showDeleted, setShowDeleted] = useState(false);
+  const navigate = useNavigate();
 
 
   useEffect(() => {
     AllFlagged();
+    handleChoiceContacts();
   }, []);
       
  
@@ -117,7 +121,7 @@ export default function Admin() {
   
 
   const handleUserClick = async (user) => {
-    
+    navigate(`/contact_profil/${user.id}`)
   }
 
   const handleKeepClick = async (flagged_msg) => {
