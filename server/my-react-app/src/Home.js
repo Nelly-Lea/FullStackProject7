@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "./styles.css";
 import { useNavigate } from "react-router-dom";
+import Cookies  from "universal-cookie";
 //import Image from "./images/readed.png"
 //import fetch from 'node-fetch'; // Importez la bibliothèque fetch ou utilisez une autre bibliothèque de requêtes HTTP
 
@@ -19,7 +20,9 @@ export default function Home() {
     const [MessagesToEditId, setMessageToEditId] = useState(null);
     const [editedMessage, setEditedMessage] = useState("");
     const navigate = useNavigate();
-    const audio = new Audio("/audio/msg_bell.wav");
+    const audio = new Audio("audio/msg_bell.wav");
+    const cookies = new Cookies();
+
   
     
     //console.log("imggg", readedImage)
@@ -466,6 +469,12 @@ export default function Home() {
     const DisplayYourInfos=async()=>{
       navigate(`/your_profil`)
     }
+    const LogOut=async()=>{
+      const currentTime=new Date().toLocaleString();
+      const cookies = new Cookies();
+      cookies.set(JSON.stringify(currentUser.email), currentTime, { path: '/' });
+      navigate(`/`)
+    }
       useEffect(() => {
         fetchUsers();
       }, []);
@@ -483,6 +492,8 @@ export default function Home() {
                     <span><img src={currentUser.profil} className="img_contact"></img></span>
                         <span >{currentUser.name}</span>
                     </div>
+          {cookies.get(JSON.stringify(currentUser.email))!=null?<span><p>{cookies.get(JSON.stringify(currentUser.email))}</p></span>:null}   
+          <span><img src="https://icon-library.com/images/logout-icon-png/logout-icon-png-20.jpg" onClick={()=>LogOut()} className="log_out_icon"></img></span>       
           <button onClick={() => AddNewGroup()}>New Group</button>
          </div>
           <ul className="ul_list_contact">

@@ -2,7 +2,7 @@ import React from "react"
 import { useNavigate } from "react-router-dom"
 
 import { useState ,useEffect } from "react";
-
+import Cookies  from "universal-cookie";
 //import ReactDOM from "react-dom/client";
 
 // regex to match numbers between 1 and 10 digits long
@@ -61,6 +61,9 @@ const handleSubmit = async (event) => {
         const res=await response.json();
         console.log("client",res);
         localStorage.setItem('currentUser', JSON.stringify(res));
+        const currentTime=new Date().toLocaleString();
+        const cookies = new Cookies();
+        cookies.set('user_connection', currentTime, { path: '/' });
         navigate(`/${res.phone}`);
 
       } else {

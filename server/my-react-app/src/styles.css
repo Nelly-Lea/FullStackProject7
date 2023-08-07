@@ -51,6 +51,11 @@ html, body {
     list-style-type: none;
     margin-left: 0px;
   }
+
+  .log_out_icon{
+    width: 20px;
+    height: 20px;
+  }
   /* tjs dans Home design des msg*/
   /* Ajoutez ces styles pour .sender-right */
 .sender-right {
