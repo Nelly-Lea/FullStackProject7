@@ -1,6 +1,7 @@
 import React, { useState,useEffect  } from "react";
 import "./Admin.css";
 import { useNavigate } from "react-router-dom";
+import Cookies  from "universal-cookie";
 
 
 export default function Admin() {
@@ -14,6 +15,8 @@ export default function Admin() {
   const [showKept, setShowKept] = useState(false);
   const [showDeleted, setShowDeleted] = useState(false);
   const navigate = useNavigate();
+  const cookies = new Cookies();
+  const currentUser = JSON.parse(localStorage["currentUser"]);
 
 
   useEffect(() => {
@@ -163,31 +166,28 @@ export default function Admin() {
 };
 
 
-  const Content1 = () => (
-    <div>
-        {users.map((user) => (
-           
-              <li key={user.id}>
-                <button onClick={() => handleUserClick(user)}>{user.name}</button>
-              </li>
-            
-          ))}
-    </div>
-  );
+const Content1 = () => (
+  <div className="user-list">
+    {users.map((user) => (
+      <li key={user.id}>
+        <button onClick={() => handleUserClick(user)}>{user.name}</button>
+      </li>
+    ))}
+  </div>
+);
 
- 
 
-  const Content2 = () => (
-    <div>
-      {Flagged_msg.map((flagged_msg) => (
-        <li key={flagged_msg.id}>
-            <p>{flagged_msg.text}</p>
-            <button onClick={() => handleKeepClick(flagged_msg)}>Keep</button>
-            <button onClick={() => handleDeleteClick(flagged_msg)}>Delete</button>
-        </li>
-      ))}
-    </div>
-  );
+const Content2 = () => (
+  <div className="flagged-message-list">
+    {Flagged_msg.map((flagged_msg) => (
+      <li key={flagged_msg.id}>
+        <p>{flagged_msg.text}</p>
+        <button className="keep-button" onClick={() => handleKeepClick(flagged_msg)}>Keep</button>
+        <button onClick={() => handleDeleteClick(flagged_msg)}>Delete</button>
+      </li>
+    ))}
+  </div>
+);
 
   
   const handleShowAllMessagesClick = () => {
@@ -211,62 +211,65 @@ export default function Admin() {
     setShowKept(false);
     setShowDeleted(true);
   };
-  
-const Content3 = () => (
+
+  const Content3 = () => (
     <div>
-      <div>
+      <div className="content-buttons">
         <button onClick={() => handleShowAllMessagesClick()}>Show All Messages</button>
         <button onClick={() => handleShowKeptMessagesClick()}>Show Kept Messages</button>
         <button onClick={() => handleShowDeletedMessagesClick()}>Show Deleted Messages</button>
       </div>
   
-      {showAllCheckedMsg && (
-        <div>
-          <h3>Messages Checked</h3>
-          {Flagged_msgChecked.map((kept_msg) => (
-            <li key={kept_msg.id}>
-              <p>{kept_msg.text}</p>
-            </li>
-          ))}
-        </div>
-      )}
+      <div className={`message-list ${showAllCheckedMsg ? 'show-section' : 'hide-section'}`}>
+        <h3>Messages Checked</h3>
+        {Flagged_msgChecked.map((kept_msg) => (
+          <li key={kept_msg.id}>
+            <p>{kept_msg.text}</p>
+          </li>
+        ))}
+      </div>
       
-      {showKept && (
-        <div>
-          <h3>Kept Messages</h3>
-          {msg_kept.map((kept_msg) => (
-            <li key={kept_msg.id}>
-              <p>{kept_msg.text}</p>
-            </li>
-          ))}
-        </div>
-      )}
+      <div className={`message-list ${showKept ? 'show-section' : 'hide-section'}`}>
+        <h3>Kept Messages</h3>
+        {msg_kept.map((kept_msg) => (
+          <li key={kept_msg.id}>
+            <p>{kept_msg.text}</p>
+          </li>
+        ))}
+      </div>
       
-      {showDeleted && (
-        <div>
-          <h3>Deleted Messages</h3>
-          {deleted_msg.map((deleted_msg) => (
-            <li key={deleted_msg.id}>
-              <p>{deleted_msg.text}</p>
-            </li>
-          ))}
-        </div>
-      )}
+      <div className={`message-list ${showDeleted ? 'show-section' : 'hide-section'}`}>
+        <h3>Deleted Messages</h3>
+        {deleted_msg.map((deleted_msg) => (
+          <li key={deleted_msg.id}>
+            <p>{deleted_msg.text}</p>
+          </li>
+        ))}
+      </div>
     </div>
   );
   
+  const LogOut=async()=>{
+    const currentTime=new Date().toLocaleString();
+    const cookies = new Cookies();
+    cookies.set(JSON.stringify(currentUser.email), currentTime, { path: '/' });
+    navigate(`/`)
+  }
+  
   return (
     <div className="admin-container">
+
       <div className="menu">
+      <img src="https://icon-library.com/images/logout-icon-png/logout-icon-png-20.jpg" onClick={()=>LogOut()} className="log_out_icon"></img>
         <button onClick={() => handleChoiceClick("contacts")}>contacts</button>
         <button onClick={() => handleChoiceClick("messages to check")}>messages to check</button>
-        <button onClick={() => handleChoiceClick("messages kept")}>messages kept</button>
+        <button onClick={() => handleChoiceClick("All checked messages")}>All checked messages</button>
       </div>
 
       <div className="content">
         {selectedChoice === "contacts" && <Content1 />}
         {selectedChoice === "messages to check" && <Content2 />}
-        {selectedChoice === "messages kept" && <Content3 />}
+        {selectedChoice === "All checked messages" && <Content3 />}
       </div>
     </div>
   );
