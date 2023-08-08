@@ -4,10 +4,12 @@
   padding: 0; /* Réinitialise les espaces internes par défaut du body 
   font-family: Arial, sans-serif; /* Choisissez une police de caractères appropriée 
 } */
+
 html, body {
   height: 100%;
   margin: 0;
   padding: 0;
+  
 }
 
 .admin-container {
