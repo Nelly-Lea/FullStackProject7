@@ -80,12 +80,13 @@ export default function Home() {
           if (response.ok) {
             console.log('Messages marked as read');
       
-            // Mettre à jour les messages dans l'état local (messages)
-            const updatedMessages = messages.map(msg => ({
-              ...msg,
-              isItRead: true
-            }));
-            updateMessages(updatedMessages);
+            setMessages(prevState => {
+            // Loop over your list
+            return prevState.map((item) => {
+                // Check for the item with the specified id and update it
+                return item.receiver == currentUserId ? {...item, isItRead: true} : item
+            })
+        })
           } else {
             console.error(`Request failed with status code ${response.status}`);
           }
@@ -94,9 +95,7 @@ export default function Home() {
         }
       };
 
-      const updateMessages = (updatedMessages) => {
-        setMessages(updatedMessages);
-      };
+      
 
       const handleGroupClick = async (group) => {
         const groupId=group.id;
