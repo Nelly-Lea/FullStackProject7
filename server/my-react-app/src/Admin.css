@@ -16,6 +16,12 @@ html, body {
   min-height: 100vh;
 }
 
+.message-image {
+  /* max-width: 100%; Ajuste la largeur de l'image au conteneur */
+  width: 60px;
+    height: 60px;
+}
+
 .menu {
   width: 200px;
   background-color: #f0f0f0;

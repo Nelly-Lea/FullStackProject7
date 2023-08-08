@@ -9,6 +9,7 @@ import { useState ,useEffect } from "react";
 
 export default function GroupProfil() {
     const [selectedGroup, setSelectedGroup] = useState(null);
+    const [participantsList, setParticipantsList]=useState([]);
     const currentUser = JSON.parse(localStorage["currentUser"]);
     const { id } = useParams();
     const navigate = useNavigate();
@@ -28,6 +29,43 @@ export default function GroupProfil() {
 
     }
 
+    const fetchParticipantsInfos = async () => {
+      try {
+        const response = await fetch(`/users/ParticipantsInfo?GroupId=${id}`); // Appeler la route GET pour récupérer les participants du groupe
+        if (response.ok) {
+          const participantsData = await response.json();
+          
+          // Récupérer les participantsId du groupe
+          const participantsIds = participantsData.participantsId;
+          console.log("participantsIds", participantsIds);
+          // Appeler la route GET pour récupérer les informations des participants
+          const participantsInfoPromises = participantsIds.map(async (participantId) => {
+            const participantResponse = await fetch(`/users/UserInfo?UserId=${participantId}`);
+            if (participantResponse.ok) {
+              const participantData = await participantResponse.json();
+              return participantData; // Renvoie les informations du participant
+            } else {
+              console.error(`Request for participant with ID ${participantId} failed with status code ${participantResponse.status}`);
+              return null;
+            }
+          });
+          
+          // Attendre que toutes les requêtes de récupération d'informations soient terminées
+          const participantsInfo = await Promise.all(participantsInfoPromises);
+          
+          // Filtrer les participantsInfo pour éliminer les entrées null
+          const filteredParticipantsInfo = participantsInfo.filter(info => info !== null);
+          
+          setParticipantsList(filteredParticipantsInfo); // Mettre à jour la variable d'état 'participantsList' avec les informations des participants
+        } else {
+          console.error(`Request failed with status code ${response.status}`);
+        }
+      } catch (error) {
+        console.error('An error occurred:', error);
+      }
+    }
+    
+
     const ReturnToHome = async () => {
       if(currentUser.name==="Admin"){
         navigate(`/admin`);
@@ -39,7 +77,13 @@ export default function GroupProfil() {
   
   useEffect(() => {
     fetchGroupInfos();
+    fetchParticipantsInfos();
   }, []);
+
+  const handleUserClick = async (user) => {
+    navigate(`/contact_profil/${user.id}`)
+  }
+  
     return(
         // <div className="contact_info_div">
         //     <p>Contact information:</p>
@@ -77,6 +121,9 @@ export default function GroupProfil() {
                 <p className="info_title">Description</p>
                 <p className="info_content">{selectedGroup.description}</p>
                 <p>participants</p>
+                {participantsList.map((user) => (
+                   <button onClick={() => handleUserClick(user)}>{user.name}</button>
+                ))}
               </div>
             </div>
           ) : null}

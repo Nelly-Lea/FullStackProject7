@@ -181,7 +181,14 @@ const Content2 = () => (
   <div className="flagged-message-list">
     {Flagged_msg.map((flagged_msg) => (
       <li key={flagged_msg.id}>
-        <p>{flagged_msg.text}</p>
+        {flagged_msg.text && (
+          <p>{flagged_msg.text}</p>
+        )}
+        
+        {flagged_msg.image && (
+          <img src={flagged_msg.image} alt="Flagged Message Image" className="message-image" />
+        )}
+        <br/>
         <button className="keep-button" onClick={() => handleKeepClick(flagged_msg)}>Keep</button>
         <button onClick={() => handleDeleteClick(flagged_msg)}>Delete</button>
       </li>
@@ -224,7 +231,14 @@ const Content2 = () => (
         <h3>Messages Checked</h3>
         {Flagged_msgChecked.map((kept_msg) => (
           <li key={kept_msg.id}>
-            <p>{kept_msg.text}</p>
+            {kept_msg.text && (
+              <p>{kept_msg.text}</p>
+            )}
+            
+            {kept_msg.image && (
+              <img src={kept_msg.image} alt="Flagged Message Image" className="message-image" />
+            )}
+                  
           </li>
         ))}
       </div>
@@ -233,8 +247,14 @@ const Content2 = () => (
         <h3>Kept Messages</h3>
         {msg_kept.map((kept_msg) => (
           <li key={kept_msg.id}>
-            <p>{kept_msg.text}</p>
-          </li>
+              {kept_msg.text && (
+                <p>{kept_msg.text}</p>
+              )}
+              
+              {kept_msg.image && (
+                <img src={kept_msg.image} alt="Flagged Message Image" className="message-image" />
+              )}         
+            </li>
         ))}
       </div>
       
@@ -242,7 +262,13 @@ const Content2 = () => (
         <h3>Deleted Messages</h3>
         {deleted_msg.map((deleted_msg) => (
           <li key={deleted_msg.id}>
-            <p>{deleted_msg.text}</p>
+           {deleted_msg.text && (
+              <p>{deleted_msg.text}</p>
+            )}
+            
+            {deleted_msg.image && (
+              <img src={deleted_msg.image} alt="Flagged Message Image" className="message-image" />
+            )}
           </li>
         ))}
       </div>
