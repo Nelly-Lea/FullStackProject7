@@ -255,7 +255,7 @@ module.exports = (connection) => {
             res.status(500).send('An error occurred.');
           } else {
             console.log("result groupp unreaded", results);
-            const senderIDs = results.map(result => parseInt(result.sender));
+            const senderIDs = results.map(result => parseInt(result.receiver));
             console.log("results group unread" ,senderIDs);
             res.json(senderIDs);
           }
