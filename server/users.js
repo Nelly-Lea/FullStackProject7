@@ -186,6 +186,72 @@ router.get('/AllUsersWithCurrentUser', (req, res) => {
    });
  });
 
+ // GET som id and name accodring list of id
+  //GET user according user id
+  // router.get('/UserInfoAccordingIdArray', (req, res) => {
+  //   try {
+  //     const userIdsJSON = req.query.userIdArray; // Chaîne JSON encodée
+  //     const userIdArray = JSON.parse(decodeURIComponent(userIdsJSON)); // Convertir en tableau
+  
+  //     const placeholders = userIdArray.map(() => '?').join(', ');
+  
+  //     const query = `
+  //       SELECT id, name
+  //       FROM users
+  //       WHERE id IN (${placeholders})
+  //     `;
+  
+  //     connection.query(query, userIdArray, (err, results) => {
+  //       if (err) {
+  //         console.error('Error in request execution', err);
+  //         res.status(500);
+  //         return res.send({ error: 'An error occurred while retrieving user details.' });
+  //       }
+  
+  //       console.log("user name and id array", results);
+  //       res.json(results);
+  //     });
+  //   } catch (error) {
+  //     console.error('An error occurred:', error);
+  //     res.status(400); // Mauvaise requête
+  //     return res.send({ error: 'Invalid user ID array.' });
+  //   }
+  // });
+  
+
+
+
+
+//   router.get('/UserInfoAccordingIdArray', (req, res) => {
+//     const userIds = req.query.userIdArray;
+//     console.log(userIds)
+//     const placeholders = userIds.map(id => parseInt(id));
+//     //const placeholders = userIds.map(() => '?').join(', ');
+
+//     // Requête SQL avec la clause IN dynamique
+//     const query = `
+//       SELECT id, name
+//       FROM users
+//       WHERE id IN (${placeholders})
+//     `;
+ 
+//    // Execute the SQL query with the parameter
+//    connection.query(query, [userIds], (err, results) => {
+//      if (err) {
+//        console.error('Error in request execution', err);
+//        res.status(500); // Set the response status to 500 (Internal Server Error)
+//        return res.send({ error: 'An error occurred while retrieving user details.' });
+//      }
+ 
+     
+//      // If the query executed successfully without any errors
+//      // Send the response with the details of the user
+//      //const user = results[0]; 
+//      console.log("user name and id array",results);
+//      res.json(results); // Send the new user as a response
+//    });
+//  });
+
 // Updating user profil PUT
  router.put('/profil', (req, res) => {
 

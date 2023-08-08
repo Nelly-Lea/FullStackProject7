@@ -23,6 +23,7 @@ export default function Home() {
     const [editedMessage, setEditedMessage] = useState("");
     // const [countMessagesUnread, setCountMessagesUnread] = useState([]);
     const [searchValue, setSearchValue] = useState("");
+    const [userListIdName, setuserListIdName] = useState([]);
 
     const navigate = useNavigate();
     // const audio = new Audio("audio/msg_bell.wav");
@@ -179,6 +180,9 @@ export default function Home() {
        setGroupsWithUnread((prevSenderIds) => {
         return prevSenderIds.filter((senderId) => group.id !== senderId);
       });
+     
+     // fetchUserName();
+            
         setShowWindow(true);
         //return null;
       }
@@ -628,6 +632,36 @@ export default function Home() {
       cookies.set(JSON.stringify(currentUser.email), currentTime, { path: '/' });
       navigate(`/`)
     }
+    // async function fetchUserName() {
+    //   const senderIds = messages.reduce((uniqueSenderIds, msg) => {
+    //     const senderId = msg.sender;
+    //     if (senderId !== currentUser.id && !uniqueSenderIds.includes(senderId)) {
+    //       uniqueSenderIds.push(senderId);
+    //     }
+    //     return uniqueSenderIds;
+    //   }, []);
+      
+    //   console.log("sender group id", senderIds);
+      
+    //   try {
+    //     const encodedUserIdArray = encodeURIComponent(JSON.stringify(senderIds));
+    //     const response = await fetch(`/users/UserInfoAccordingIdArray?userIdArray=${encodedUserIdArray}`); 
+    //     if (response.ok) {
+    //       const userData = await response.json();
+    //       setuserListIdName(userData);
+    //     } else {
+    //       console.error(`Request failed with status code ${response.status}`);
+    //     }
+    //   } catch (error) {
+    //     console.error('An error occurred:', error);
+    //   }
+    // }
+    
+   
+   
+
+
+
       useEffect(() => {
         fetchUsers();
         fetchUnreadMessges();
@@ -745,6 +779,15 @@ export default function Home() {
           ) : (
             // Sinon, afficher le texte du message
             <>
+          {/* {msg.isItGroup && msg.sender !=currentUser.id ?<span><p>{userListIdName.find(user => user.id === msg.sender)?.name}</p></span>:null}   */}
+          {/* {msg.isItGroup  ? (
+            <span>
+              <p>
+                {userListIdName.find(user => user.id === msg.sender)?.name || 'Unknown User'}
+              </p>
+            </span>
+          ) : null} */}
+
           {msg.text !== "" ? <p>{msg.text}</p> : ""}
           {msg.image !== "" ? <img src={msg.image} className="img_msg" alt="Message image" /> : ""}
           <p>{new Date(msg.date).toLocaleDateString()}</p>
