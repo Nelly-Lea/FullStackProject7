@@ -10,7 +10,8 @@
       "isItRead": true,
       "isItGroup":false,
       "modified":false,
-      "flagged":false
+      "flagged":false,
+      "readedBy":[3]
     },
     {
         "id": 2,
@@ -23,7 +24,8 @@
         "isItRead": true,
         "isItGroup":false,
         "modified":false,
-        "flagged":false
+        "flagged":false,
+        "readedBy":[2]
       },
 	   {
 		"id": 3,
@@ -36,6 +38,7 @@
 		"isItRead": true,
 		"isItGroup":false,
     "modified":false,
-    "flagged":false
+    "flagged":false,
+    "readedBy":[3]
 	  }
 	]

@@ -9,7 +9,7 @@ import Cookies  from "universal-cookie";
 export default function Home() {
     const [users, setUsers] = useState([]);
     const [usersWithUnread, setUsersWithUnread] = useState([]);
-
+    const [groupsWithUnread, setGroupsWithUnread] = useState([]);
     const [messages, setMessages] = useState([]);
     const [showWindow, setShowWindow] = useState(false);
     const [selectedUser, setSelectedUser] = useState(null);
@@ -33,7 +33,8 @@ export default function Home() {
     };
     
     const filteredUsers = users.filter((user) =>
-      user.name && user.name.toLowerCase().includes(searchValue.toLowerCase())
+     "phone" in user ?
+    user.name && user.name.toLowerCase().includes(searchValue.toLowerCase()):(user.title&&user.title.toLowerCase().includes(searchValue.toLowerCase()))
     );
 
     
@@ -53,14 +54,17 @@ export default function Home() {
             const messagesData = await response.json();
             console.log('Messages:', messagesData);
             setMessages(messagesData);
+            if(messagesData.length >0){
+              markMessagesAsRead(currentUser, user);
+            }
           } else {
             console.error(`Request failed with status code ${response.status}`);
           }
         } catch (error) {
           console.error('An error occurred:', error);
         }
-
-        markMessagesAsRead(currentUser.id, user.id);
+         
+       
         setUsersWithUnread((prevSenderIds) => {
           return prevSenderIds.filter((senderId) => user.id !== senderId);
         });
@@ -68,7 +72,10 @@ export default function Home() {
       };
 
           
-      const markMessagesAsRead = async (currentUserId, selectedUserId) => {
+      const markMessagesAsRead = async (CurrentUser, SelectedUser) => {
+        const currentUserId=CurrentUser.id;
+        const selectedUserId=SelectedUser.id;
+        if("phone" in SelectedUser){
         try {
           const response = await fetch('/messages/markMessagesAsRead', {
             method: 'POST',
@@ -88,7 +95,7 @@ export default function Home() {
             // Loop over your list
             return prevState.map((item) => {
                 // Check for the item with the specified id and update it
-                return item.receiver == currentUserId ? {...item, isItRead: true} : item
+                return item.receiver == currentUserId && item.isItGroup==false? {...item, isItRead: true} : item
             })
         })
           } else {
@@ -97,6 +104,50 @@ export default function Home() {
         } catch (error) {
           console.error('An error occurred:', error);
         }
+      }else{
+        try {
+          const response = await fetch('/messages/markMessagesGroupAsRead', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              currentUserId,
+              selectedUserId
+            })
+          });
+      
+          if (response.ok) {
+            const data = await response.json();
+            if(data.length>0){
+        //           setMessages(prevState => {
+        //     // Loop over your list
+        //     return prevState.map((item) => {
+        //         // Check for the item with the specified id and update it
+        //         return item.receiver == selectedUserId && item.isItGroup==true ? {...item, isItRead: true} : item
+        //     })
+        // })
+        //const messageIds = data.map(row => row.id);
+        setMessages(prevState => {
+          // Loop over your list
+          return prevState.map((item) => {
+              // Check if the item's ID is in the list of IDs from the server response
+              return data.includes(item.id) ? { ...item, isItRead: true } : item;
+          });
+      });
+
+            }
+            //console.log('Messages marked as read');
+      
+        
+          } else {
+            console.error(`Request failed with status code ${response.status}`);
+          }
+        } catch (error) {
+          console.error('An error occurred:', error);
+        }
+
+      }
       };
 
       
@@ -115,13 +166,19 @@ export default function Home() {
             const messagesData = await response.json();
             console.log('Messages:', messagesData);
             setMessages(messagesData);
+            if(messagesData.length >0){
+              markMessagesAsRead(currentUser, group);
+            }
           } else {
             console.error(`Request failed with status code ${response.status}`);
           }
         } catch (error) {
           console.error('An error occurred:', error);
         }
-      
+       // markMessagesAsRead(currentUser, group);
+       setGroupsWithUnread((prevSenderIds) => {
+        return prevSenderIds.filter((senderId) => group.id !== senderId);
+      });
         setShowWindow(true);
         //return null;
       }
@@ -204,7 +261,8 @@ export default function Home() {
         isItRead:false,
         isItGroup:Isgroup,
         modified:false,
-        flagged:false
+        flagged:false,
+        readedBy:JSON.stringify([])
         // Add any other data needed for the server request
       };
 
@@ -260,19 +318,36 @@ export default function Home() {
       };
 
       const fetchUnreadMessges = async () => {
-        try {
-          const response = await fetch(`/messages/getUnreadSenderIDs?currentUserId=${currentUser.id}`); // Appeler la route GET que vous avez créée
-          if (response.ok) {
-            const sendersId = await response.json();
-            setUsersWithUnread(sendersId); // Mettre à jour la variable d'état 'users' avec les utilisateurs récupérés
-            console.log(sendersId);
-        } else {
-            console.error(`Request failed with status code ${response.status}`);
+        
+          try {
+            const response = await fetch(`/messages/getUnreadSenderIDs?currentUserId=${currentUser.id}`); // Appeler la route GET que vous avez créée
+            if (response.ok) {
+              const sendersId = await response.json();
+              setUsersWithUnread(sendersId); // Mettre à jour la variable d'état 'users' avec les utilisateurs récupérés
+              console.log(sendersId);
+          } else {
+              console.error(`Request failed with status code ${response.status}`);
+            }
+          } catch (error) {
+            console.error('An error occurred:', error);
           }
-        } catch (error) {
-          console.error('An error occurred:', error);
+        
+      
+      // for groups messages unread
+      try {
+        const response = await fetch(`/messages/getUnreadSenderIDsGroup?currentUserId=${currentUser.id}`); // Appeler la route GET que vous avez créée
+        if (response.ok) {
+          const sendersIdGroup = await response.json();
+          setGroupsWithUnread(sendersIdGroup); // Mettre à jour la variable d'état 'users' avec les utilisateurs récupérés
+          console.log(sendersIdGroup);
+      } else {
+          console.error(`Request failed with status code ${response.status}`);
         }
-      };
+      } catch (error) {
+        console.error('An error occurred:', error);
+      }
+    
+    };
 
     const handleMessageClick= async(msgId)=>{
       setSelectedMessageId(msgId);
@@ -535,7 +610,12 @@ export default function Home() {
     }
     const DisplayProfilContact=async()=>{
       //navigate(`/new_group`); 
-      navigate(`/contact_profil/${selectedUser.id}`)
+      if("phone" in selectedUser){
+        navigate(`/contact_profil/${selectedUser.id}`)
+      }else{
+        navigate(`/group_profil/${selectedUser.id}`)
+      }
+      
       //return null;
 
     }
@@ -552,7 +632,33 @@ export default function Home() {
         fetchUsers();
         fetchUnreadMessges();
       }, []);
-      
+
+      let uniqueKey = 0; // Initialisez la variable uniqueKey à 0
+
+    const userList = filteredUsers.map((user) => {
+      uniqueKey++; // Incrémentez uniqueKey à chaque itération
+
+      return (
+        "phone" in user ? (
+          <li key={uniqueKey} className="contact_list">
+            <div className="contact_container" onClick={() => handleUserClick(user)}>
+                    <span><img src={user.profil} className="img_contact"></img></span>
+                        <span >{user.name}</span>
+                        {usersWithUnread.includes(user.id)?<span><img src="https://img.icons8.com/?size=512&id=FkQHNSmqWQWH&format=png" className="greenIcon"></img></span>:""}
+                    </div>
+          </li>
+        ) : (
+          <li key={uniqueKey} className="contact_list">
+           <div className="contact_container" onClick={() => handleGroupClick(user)}>
+                    <span><img src={user.profil} className="img_contact"></img></span>
+                        <span >{user.title}</span>
+                        {groupsWithUnread.includes(user.id)?<span><img src="https://img.icons8.com/?size=512&id=FkQHNSmqWQWH&format=png" className="greenIcon"></img></span>:""}
+                    </div>
+          </li>
+        )
+      );
+    });
+          
 
             
 
@@ -581,11 +687,12 @@ export default function Home() {
         />
 
           <ul className="ul_list_contact">
-          {filteredUsers.map((user) => (
-          // {users.map((user) => (
+            {userList}
+          {/* {filteredUsers.map((user) => (
+         
             "phone" in user ? (
               <li key={user.id} className="contact_list">
-                {/* <button onClick={() => handleUserClick(user)}>{user.name}</button> */}
+              
                 <div className="contact_container" onClick={() => handleUserClick(user)}>
                     <span><img src={user.profil} className="img_contact"></img></span>
                         <span >{user.name}</span>
@@ -594,15 +701,15 @@ export default function Home() {
               </li>
             ) : (
               <li key={user.id} className="contact_list">
-                {/* <button onClick={() => handleGroupClick(user)}>{user.title}</button> */}
+               
                 <div className="contact_container" onClick={() => handleGroupClick(user)}>
                     <span><img src={user.profil} className="img_contact"></img></span>
                         <span >{user.title}</span>
                     </div>
               </li>
             )
-          // ))}
-          ))}
+          
+          ))} */}
         </ul>
         </div>
          <div className="right-div speech-wrapper"> 

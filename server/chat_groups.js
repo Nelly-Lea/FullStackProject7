@@ -30,5 +30,30 @@ router.post('/AddGroup', (req, res) => {
    });
 
 
+   // GET group infos
+  router.get('/GroupInfo', (req, res) => {
+    const groupId = req.query.GroupId;
+    console.log(groupId)
+   // Create an SQL query with a prepared parameter
+   const query = 'SELECT * FROM chat_groups WHERE id = ?';
+ 
+   // Execute the SQL query with the parameter
+   connection.query(query, [groupId], (err, results) => {
+     if (err) {
+       console.error('Error in request execution', err);
+       res.status(500); // Set the response status to 500 (Internal Server Error)
+       return res.send({ error: 'An error occurred while retrieving group details.' });
+     }
+ 
+     
+     // If the query executed successfully without any errors
+     // Send the response with the details of the user
+     const group = results[0]; 
+     console.log("group infos",group);
+     res.json(group); // Send the new user as a response
+   });
+ });
+
+
     return router;
 }

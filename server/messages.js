@@ -16,7 +16,7 @@ module.exports = (connection) => {
         console.log(currentId);
         // Faites une requête SQL pour récupérer tous les utilisateurs sauf celui en ligne actuellement
         // connection.query('SELECT * FROM messages WHERE sender = ? && receiver = ?', [currentId,selectedUserId], (err, rows) => {
-            connection.query('SELECT * FROM messages WHERE (sender = ? AND receiver = ?) OR (sender = ? AND receiver = ?) ORDER BY date ASC, hour ASC;', [currentId, selectedUserId, selectedUserId, currentId], (err, rows) => {
+            connection.query('SELECT * FROM messages WHERE (isItGroup = ?) AND ((sender = ? AND receiver = ?) OR (sender = ? AND receiver = ?)) ORDER BY date ASC, hour ASC;', [0, currentId, selectedUserId, selectedUserId, currentId], (err, rows) => {
                 //if (err) {
         if (err) {
             console.error('Erreur lors de l\'exécution de la requête:', err);
@@ -230,9 +230,9 @@ module.exports = (connection) => {
   router.get('/getUnreadSenderIDs', (req, res) => {
       const currentUser = req.query.currentUserId; // Replace with the actual user ID
       // console.log(currentUser);
-      const query = `SELECT DISTINCT sender FROM messages WHERE receiver = ? AND isItRead = 0`;
+      const query = `SELECT DISTINCT sender FROM messages WHERE receiver = ? AND isItRead = 0 AND isItGroup = ?`;
     
-      connection.query(query, [currentUser], (error, results) => {
+      connection.query(query, [currentUser, 0], (error, results) => {
         if (error) {
           console.error('Error fetching unread sender IDs:', error);
           res.status(500).send('An error occurred.');
@@ -243,6 +243,24 @@ module.exports = (connection) => {
         }
       });
     });
+    router.get('/getUnreadSenderIDsGroup', (req, res) => {
+        const currentUser = req.query.currentUserId; // Replace with the actual user ID
+        // console.log(currentUser);
+        const query = `SELECT DISTINCT receiver FROM messages WHERE isItGroup = ? AND sender != ? AND NOT JSON_CONTAINS(readedBy, ?)
+        `;
+      
+        connection.query(query, [ 1, currentUser, currentUser.toString()], (error, results) => {
+          if (error) {
+            console.error('Error fetching unread sender IDs:', error);
+            res.status(500).send('An error occurred.');
+          } else {
+            console.log("result groupp unreaded", results);
+            const senderIDs = results.map(result => parseInt(result.sender));
+            console.log("results group unread" ,senderIDs);
+            res.json(senderIDs);
+          }
+        });
+      });
 
       
 router.post('/markMessagesAsRead', (req, res) => {
@@ -250,8 +268,8 @@ router.post('/markMessagesAsRead', (req, res) => {
   const selectedUserId = req.body.selectedUserId;
   console.log(selectedUserId);
   connection.query(
-      'UPDATE messages SET isItRead = 1 WHERE receiver = ? AND sender = ?',
-      [currentUserId, selectedUserId],
+      'UPDATE messages SET isItRead = 1 WHERE receiver = ? AND sender = ? AND isItGroup = ?',
+      [currentUserId, selectedUserId, 0],
       (err, updateResult) => {
           if (err) {
               console.error('Error updating messages:', err);
@@ -263,6 +281,184 @@ router.post('/markMessagesAsRead', (req, res) => {
       }
   );
 });
+
+// router.post('/markMessagesGroupAsRead', (req, res) => {
+//     const currentUserId = req.body.currentUserId;
+//     const selectedUserId = req.body.selectedUserId;
+//     console.log(selectedUserId);
+//     const query = `UPDATE messages 
+//     SET readedBy = JSON_ARRAY_APPEND(readedBy, '$', ?) 
+//     WHERE receiver = ? AND sender != ? AND isItGroup = 1 AND NOT JSON_CONTAINS(readedBy, ?)
+//   `;
+  
+//     connection.query( query,[currentUserId, selectedUserId, currentUserId, currentUserId],(err, updateResult) => {
+//             if (err) {
+//                 console.error('Error updating messages:', err);
+//                 res.status(500).send('Error updating messages');
+//             } else {
+//                 console.log('Messages marked as read:', updateResult);
+//                // res.status(200).send('id of currentUser added');
+//             }
+//         }
+//     );
+//     const query1=`UPDATE messages SET isItRead = 1 WHERE JSON_LENGTH(readedBy) = (SELECT JSON_LENGTH(participantsId) FROM chat_groups WHERE id = ?) - 1
+//     `
+//     connection.query( query1,[selectedUserId],(err, updateRead) => {
+//         if (err) {
+//             console.error('Error updating messages:', err);
+//             res.status(500).send('Error updating messages');
+//         } else {
+//             console.log('Messages marked as read:', updateRead);
+//             //res.json(updateRead);
+//             //res.status(200).send('Messages marked as read');
+//         }
+//     }
+// );
+//   const selectQuery = 'SELECT isItRead FROM messages WHERE receiver = ? AND isItGroup = ?'; // Votre condition de sélection ici
+
+//     // Exécution de la requête de sélection
+//     connection.query(selectQuery,[selectedUserId, 1], (selectErr, selectResult) => {
+//         if (selectErr) {
+//             console.error('Error selecting messages:', selectErr);
+//             // Gérer l'erreur et envoyer la réponse appropriée au client
+//             return res.status(500).json({ error: 'An error occurred while selecting messages' });
+//         }
+
+//         // Envoyer la réponse au client avec la nouvelle valeur de isItRead
+//         return res.json(selectResult[0].isItRead );
+//     });
+//   });
+
+// router.post('/markMessagesGroupAsRead', (req, res) => {
+//     const currentUserId = req.body.currentUserId;
+//     const selectedUserId = req.body.selectedUserId;
+
+//     const query0 = `SELECT id FROM messages WHERE receiver = ? AND sender != ? AND isItGroup = 1;`;
+//     connection.query(query0, [selectedUserId, currentUserId], (err, result0) => {
+//         if (err) {
+//             console.error('Error updating messages:', err);
+//             res.status(500).send('Error updating messages');
+//         } else {
+//             const groupIds = result0.map(row => row.id);
+
+//             const query = `
+//             UPDATE messages 
+//             SET readedBy = JSON_ARRAY_APPEND(
+//               readedBy, '$', ?
+//             ) 
+//             WHERE id IN (?) AND NOT JSON_CONTAINS(readedBy, ?);
+//             `;
+
+//             connection.query(query, [currentUserId, groupIds, currentUserId.toString()], (err, updateResult) => {
+//                 if (err) {
+//                     console.error('Error updating messages:', err);
+//                     res.status(500).send('Error updating messages');
+//                 } else {
+//                     console.log('Messages marked as read:', updateResult);
+
+//                     const query1 = `
+//                     UPDATE messages 
+//                     SET isItRead = 1 
+//                     WHERE JSON_LENGTH(readedBy) = (SELECT JSON_LENGTH(participantsId) FROM chat_groups WHERE id = ?) - 1
+//                     `;
+
+//                     connection.query(query1, [selectedUserId], (err, updateRead) => {
+//                         if (err) {
+//                             console.error('Error updating messages:', err);
+//                             res.status(500).send('Error updating messages');
+//                         } else {
+//                             console.log('Messages marked as read:', updateRead);
+
+//                             const selectQuery = 'SELECT isItRead FROM messages WHERE receiver = ? AND isItGroup = ?';
+//                             connection.query(selectQuery, [selectedUserId, 1], (selectErr, selectResult) => {
+//                                 if (selectErr) {
+//                                     console.error('Error selecting messages:', selectErr);
+//                                     return res.status(500).json({ error: 'An error occurred while selecting messages' });
+//                                 }
+//                                 return res.json(selectResult[0].isItRead);
+//                             });
+//                         }
+//                     });
+//                 }
+//             });
+//         }
+//     });
+// });
+
+router.post('/markMessagesGroupAsRead', (req, res) => {
+    const currentUserId = req.body.currentUserId;
+    const selectedUserId = req.body.selectedUserId;
+     // select id messages in group that the currentUser didn't send 
+    const query0 = `SELECT id FROM messages WHERE receiver = ? AND sender != ? AND isItGroup = 1;`;
+    connection.query(query0, [selectedUserId, currentUserId], (err, result0) => {
+        if (err) {
+            console.error('Error updating messages:', err);
+            res.status(500).send('Error updating messages');
+        } else {
+            const groupIds = result0.map(row => row.id);
+
+            if (groupIds.length === 0) {
+                console.log('No messages found to update.');
+                return res.status(200).json({ message: 'No messages found to update.' });
+            }
+            // add the current user id to readedBy array if it not in readedBy array
+          
+            const query = `
+            UPDATE messages 
+            SET readedBy = JSON_ARRAY_APPEND(
+              readedBy, '$', ?
+            ) 
+            WHERE id IN (?) AND NOT JSON_CONTAINS(readedBy, ?);
+            `;
+
+            connection.query(query, [currentUserId, groupIds, currentUserId.toString()], (err, updateResult) => {
+                if (err) {
+                    console.error('Error updating messages:', err);
+                    res.status(500).send('Error updating messages');
+                } else {
+                    console.log('Messages marked as read:', updateResult);
+                     // set isItRead = true if lenght of array readedBy = lenght of participantsId -1 
+                    const query1 = `
+                    UPDATE messages 
+                    SET isItRead = 1 
+                    WHERE JSON_LENGTH(readedBy) = (SELECT JSON_LENGTH(participantsId) FROM chat_groups WHERE id = ?) - 1
+                    `;
+
+                    connection.query(query1, [selectedUserId], (err, updateRead) => {
+                        if (err) {
+                            console.error('Error updating messages:', err);
+                            res.status(500).send('Error updating messages');
+                        } else {
+                            console.log('Messages marked as read:', updateRead);
+
+                            console.log("id du group", selectedUserId);
+                            // return id of messages in group that are readed by all participants 
+                            const selectQuery = 'SELECT id FROM messages WHERE receiver = ? AND isItGroup = ? AND isItRead = ?';
+                            connection.query(selectQuery, [selectedUserId, 1, 1], (selectErr, selectResult) => {
+                                if (selectErr) {
+                                    console.error('Error selecting messages:', selectErr);
+                                    return res.status(500).json({ error: 'An error occurred while selecting messages' });
+                                }
+                                const messageIds = selectResult.map(row => row.id);
+    
+                                // Envoyer la liste des IDs au client
+                                return res.json(messageIds);
+                                // console.log("readd",selectResult[0].isItRead);
+                                // return res.json(selectResult[0].isItRead);
+                            });
+                        }
+                    });
+                }
+            });
+        }
+    });
+});
+
+
+
+
+  
+    
 
   
 
