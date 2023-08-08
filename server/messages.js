@@ -227,25 +227,22 @@ module.exports = (connection) => {
   
 
   
-  router.get('/getUnreadMessagesCount', (req, res) => {
-    const currentUserId = req.query.currentUserId;
-    const otherUserId = req.query.otherUserId;
-
-    connection.query(
-        'SELECT COUNT(*) as unreadCount FROM messages WHERE sender = ? AND receiver = ? AND isItRead = 0;',
-        [otherUserId, currentUserId],
-        (err, result) => {
-            if (err) {
-                console.error('Erreur lors de l\'exécution de la requête:', err);
-                res.status(500).send('Erreur lors de la récupération du nombre de messages non lus');
-            } else {
-                const unreadCount = result[0].unreadCount;
-                console.log("unreadCount",unreadCount);
-                res.json({ unreadCount });
-            }
+  router.get('/getUnreadSenderIDs', (req, res) => {
+      const currentUser = req.query.currentUserId; // Replace with the actual user ID
+      // console.log(currentUser);
+      const query = `SELECT DISTINCT sender FROM messages WHERE receiver = ? AND isItRead = 0`;
+    
+      connection.query(query, [currentUser], (error, results) => {
+        if (error) {
+          console.error('Error fetching unread sender IDs:', error);
+          res.status(500).send('An error occurred.');
+        } else {
+          const senderIDs = results.map(result => parseInt(result.sender));
+          // console.log("results" ,senderIDs);
+          res.json(senderIDs);
         }
-    );
-});
+      });
+    });
 
       
 router.post('/markMessagesAsRead', (req, res) => {

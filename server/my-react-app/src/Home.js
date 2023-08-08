@@ -8,6 +8,8 @@ import Cookies  from "universal-cookie";
 //import readedImage from "./images/readed1.jpg";
 export default function Home() {
     const [users, setUsers] = useState([]);
+    const [usersWithUnread, setUsersWithUnread] = useState([]);
+
     const [messages, setMessages] = useState([]);
     const [showWindow, setShowWindow] = useState(false);
     const [selectedUser, setSelectedUser] = useState(null);
@@ -39,7 +41,7 @@ export default function Home() {
 
     const handleUserClick = async (user) => {
         setSelectedUser(user);
-      
+        
         try {
           const response = await fetch(
             `/messages/messagesWithCurrentUser?currentId=${currentUser.id}&selectedUserId=${user.id}`
@@ -59,7 +61,9 @@ export default function Home() {
         }
 
         markMessagesAsRead(currentUser.id, user.id);
-
+        setUsersWithUnread((prevSenderIds) => {
+          return prevSenderIds.filter((senderId) => user.id !== senderId);
+        });
         setShowWindow(true);
       };
 
@@ -247,6 +251,21 @@ export default function Home() {
           if (response.ok) {
             const usersData = await response.json();
             setUsers(usersData); // Mettre à jour la variable d'état 'users' avec les utilisateurs récupérés
+        } else {
+            console.error(`Request failed with status code ${response.status}`);
+          }
+        } catch (error) {
+          console.error('An error occurred:', error);
+        }
+      };
+
+      const fetchUnreadMessges = async () => {
+        try {
+          const response = await fetch(`/messages/getUnreadSenderIDs?currentUserId=${currentUser.id}`); // Appeler la route GET que vous avez créée
+          if (response.ok) {
+            const sendersId = await response.json();
+            setUsersWithUnread(sendersId); // Mettre à jour la variable d'état 'users' avec les utilisateurs récupérés
+            console.log(sendersId);
         } else {
             console.error(`Request failed with status code ${response.status}`);
           }
@@ -531,6 +550,7 @@ export default function Home() {
     }
       useEffect(() => {
         fetchUsers();
+        fetchUnreadMessges();
       }, []);
       
 
@@ -569,6 +589,7 @@ export default function Home() {
                 <div className="contact_container" onClick={() => handleUserClick(user)}>
                     <span><img src={user.profil} className="img_contact"></img></span>
                         <span >{user.name}</span>
+                        {usersWithUnread.includes(user.id)?<span><img src="https://img.icons8.com/?size=512&id=FkQHNSmqWQWH&format=png" className="greenIcon"></img></span>:""}
                     </div>
               </li>
             ) : (
