@@ -41,22 +41,7 @@ export default function ContactProfil() {
     fetchContactInfos();
   }, []);
     return(
-        // <div className="contact_info_div">
-        //     <p>Contact information:</p>
-        //     {selectedUser!=null ?
-        //     <div> 
-        //     <div >
-        //     <img src={selectedUser.profil} className="img_contact_display_info"></img>
-        //     <p className="info_user_txt">{selectedUser.name}</p>
-        //     <p className="info_user_txt">{selectedUser.phone}</p>
-        // </div>
-        // <div>
-        //     <p>Info</p>
-        //     <p>{selectedUser.status}</p>
-        // </div>
-        // </div>:null}
-            
-        // </div>
+        
         <div>
            <img src="https://img.icons8.com/?size=512&id=6483&format=png" onClick={()=>ReturnToHome()} className="returnToHome"></img>
         <div className="main_content">
@@ -70,13 +55,15 @@ export default function ContactProfil() {
                 </div>
                 <div className="user_details">
                   <p className="info_user_txt">{selectedUser.name}</p>
+                  <br/>
                   <p className="info_user_txt">{selectedUser.phone}</p>
                 </div>
               </div>
               <div className="user_status">
-                <p className="info_title">Info</p>
-                <p className="info_content">{selectedUser.status}</p>
+                <span className="info_title">Status:</span>
+                <span className="info_content">{selectedUser.status}</span>
               </div>
+
             </div>
           ) : null}
         </div>

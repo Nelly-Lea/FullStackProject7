@@ -4,6 +4,32 @@ html, body {
     margin: 0;
     padding: 0;
   }
+/* Reset default styles and set height to 100% */
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  font-family: 'Helvetica Neue', sans-serif;
+}
+
+/* Style for WhatsApp web layout */
+.whatsapp-web {
+  display: flex;
+  height: 100%;
+  background-color: #f0f0f0;
+}
+
+.sidebar {
+  flex: 1;
+  background-color: #fff;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.chat-area {
+  flex: 3;
+  background-color: #fff;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
 
 .img_msg{
     width: 100px;
