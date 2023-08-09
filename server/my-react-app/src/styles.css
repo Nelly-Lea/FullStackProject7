@@ -1,4 +1,72 @@
 /*style for home*/
+
+/* Styles for mobile devices */
+@media (max-width: 768px) {
+  .container {
+    flex-direction: column; /* Stack les éléments verticalement */
+  }
+
+  .left-div, .right-div {
+    width: 100%; /* Utiliser toute la largeur disponible */
+    height: auto;
+    padding: 10px; /* Réduire l'espace entre les éléments */
+  }
+
+  .right-div {
+    width: 100%; /* Utiliser toute la largeur disponible */
+    box-sizing: border-box; /* Inclure les bordures et les marges dans la largeur */
+    padding: 10px; /* Ajouter un peu d'espace autour du contenu */
+    overflow-y: scroll; /* Ajouter une barre de défilement verticale si le contenu dépasse */
+  }
+  
+  .ul_list_contact {
+    padding: 0; /* Réduire l'espace autour de la liste de contacts */
+  }
+
+  .contact_container {
+    display: flex;
+    align-items: center;
+    padding: 5px;
+
+  }
+
+  .img_contact {
+    width: 40px; /* Réduire la taille de l'image de contact */
+    height: 40px;
+    margin-right: 10px;
+  }
+
+  /* Ajouter d'autres styles pour le reste des éléments */
+}
+
+.left-div {
+  /* display: flex; */
+  justify-content: space-between;
+  /* align-items: center; */
+  padding: 20px;
+}
+
+.log_out_icon {
+  cursor: pointer;
+  margin-right: 10px; /* Ajoute une marge à droite de l'icône */
+
+}
+
+.new-group-button {
+  background-color: #555;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  margin-left: 10px; /* Ajoute une marge à gauche du bouton */
+
+}
+
+.new-group-button:hover {
+  background-color: #444;
+}
+
 html, body {
     height: 100%;
     margin: 0;
@@ -66,7 +134,17 @@ html, body {
     flex-basis: 70%;
     background-color: lightgreen;
     min-height: 100vh;
+
   }
+
+  .messages-container {
+    max-height: calc(100vh - 150px);
+    max-width: 900px; 
+    overflow-y: auto; /* Défilement vertical */
+    overflow-x: hidden; /* Supprime le défilement horizontal */
+  }
+  
+  
 
   .ul_list_contact{
     margin: 0;

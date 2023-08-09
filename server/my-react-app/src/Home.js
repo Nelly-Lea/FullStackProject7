@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect,useRef } from "react";
 import "./styles.css";
 import { useNavigate } from "react-router-dom";
 import Cookies  from "universal-cookie";
+
 //import Image from "./images/readed.png"
 //import fetch from 'node-fetch'; // Importez la bibliothèque fetch ou utilisez une autre bibliothèque de requêtes HTTP
 
@@ -23,11 +24,12 @@ export default function Home() {
     const [editedMessage, setEditedMessage] = useState("");
     // const [countMessagesUnread, setCountMessagesUnread] = useState([]);
     const [searchValue, setSearchValue] = useState("");
-    const [userListIdName, setuserListIdName] = useState([]);
 
     const navigate = useNavigate();
     // const audio = new Audio("audio/msg_bell.wav");
     const cookies = new Cookies();
+    const audioRef = useRef(null);
+
 
     const handleSearchChange = (event) => {
       setSearchValue(event.target.value);
@@ -303,6 +305,9 @@ export default function Home() {
       } catch (error) {
         console.error("An error occurred while adding the new message:", error);
       }
+      // if (audioRef.current) {
+      //   audioRef.current.play();
+      // }
       // audio.play();
     };
     
@@ -694,13 +699,27 @@ export default function Home() {
     });
           
 
-            
+    const playAudio = () => {
+      if (audioRef.current) {
+        audioRef.current.play();
+      }
+    };
+      
 
       return (
       <div className="container">
           <div className="left-div">
-          <h1>Contacts</h1>
          <div>
+         <span>
+            <img
+              src="https://icon-library.com/images/logout-icon-png/logout-icon-png-20.jpg"
+              onClick={() => LogOut()}
+              className="log_out_icon"
+            />
+          </span>
+          <button onClick={() => AddNewGroup()} className="new-group-button">
+            New Group
+          </button>
           {/* <div>
             <p>Hi {currentUser.name}</p>
           </div> */}
@@ -708,9 +727,15 @@ export default function Home() {
                     <span><img src={currentUser.profil} className="img_contact"></img></span>
                         <span >{currentUser.name}</span>
                     </div>
-          {cookies.get(JSON.stringify(currentUser.email))!=null?<span><p>{cookies.get(JSON.stringify(currentUser.email))}</p></span>:null}   
-          <span><img src="https://icon-library.com/images/logout-icon-png/logout-icon-png-20.jpg" onClick={()=>LogOut()} className="log_out_icon"></img></span>       
-          <button onClick={() => AddNewGroup()}>New Group</button>
+                    <div style={{ display: 'flex', alignItems: 'center' }}>
+                  <p>Last connexion: </p>
+                  {cookies.get(JSON.stringify(currentUser.email)) != null ? (
+                    <span>
+                      <p>{cookies.get(JSON.stringify(currentUser.email))}</p>
+                    </span>
+                  ) : null}
+                </div>
+
          </div>
          <input
             type="text"
@@ -747,6 +772,7 @@ export default function Home() {
         </ul>
         </div>
          <div className="right-div speech-wrapper"> 
+
           {/* Condition pour afficher la fenêtre vide */}
           {showWindow && (
             <div>
@@ -757,6 +783,7 @@ export default function Home() {
                         {"phone" in selectedUser ? <span >{selectedUser.name}</span>:<span>{selectedUser.title}</span>}
                     </div>
               </div>
+      <div className="messages-container">
         {messages.map((msg) => (
         <li
           key={msg.id}
@@ -816,8 +843,11 @@ export default function Home() {
         </li>
         
       ))}
+      </div>
             {selectedUser && (
               <form onSubmit={handleSubmitNewMessage}>
+                <audio ref={audioRef} src="http://commondatastorage.googleapis.com/codeskulptor-assets/week7-brrring.m4a" />
+
                 <textarea
                   value={newMessage}
                   onChange={handleNewMessageChange}
@@ -832,7 +862,7 @@ export default function Home() {
                   {selectedImage && (
                     <img src={selectedImage} alt="Selected Image" className="selected_image_newMsg" />
                   )}
-                <button type="submit">Send</button>
+                <button type="submit" onClick={playAudio}>Send</button>
               
               </form>
             )}

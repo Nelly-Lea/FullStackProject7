@@ -21,6 +21,7 @@ export default function GroupProfil() {
             if (response.ok) {
               const groupData = await response.json();
               setSelectedGroup(groupData) // Mettre à jour la variable d'état 'users' avec les utilisateurs récupérés
+              fetchParticipantsInfos(groupData);
           } else {
               console.error(`Request failed with status code ${response.status}`);
             }
@@ -30,7 +31,7 @@ export default function GroupProfil() {
 
     }
 
-    const fetchParticipantsInfos = async () => {
+    const fetchParticipantsInfos = async (selectedGroup) => {
     //   try {
     //     const response = await fetch(`/users/ParticipantsInfo?GroupId=${id}`); // Appeler la route GET pour récupérer les participants du groupe
     //     if (response.ok) {
@@ -40,8 +41,8 @@ export default function GroupProfil() {
     //       const participantsIds = participantsData.participantsId;
     //       console.log("participantsIds", participantsIds);
     //       // Appeler la route GET pour récupérer les informations des participants
-           console.log("list participants", JSON.parse(selectedGroup.participantsIds));
-           const participantsInfoPromises = JSON.parse(selectedGroup.participantsIds).map(async (participantId) => {
+           console.log("list participants",selectedGroup.participantsId);
+           const participantsInfoPromises = (selectedGroup.participantsId).map(async (participantId) => {
             const participantResponse = await fetch(`/users/UserInfo?UserId=${participantId}`);
             if (participantResponse.ok) {
               const participantData = await participantResponse.json();
@@ -79,7 +80,7 @@ export default function GroupProfil() {
   
   useEffect(() => {
     fetchGroupInfos();
-    fetchParticipantsInfos();
+    // fetchParticipantsInfos();
   }, []);
 
   const handleUserClick = async (user) => {

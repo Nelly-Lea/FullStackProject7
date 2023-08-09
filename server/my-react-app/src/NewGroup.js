@@ -1,6 +1,7 @@
 import React from "react"
 import { useNavigate } from "react-router-dom"
 
+import "./newGroup.css";
 
 import { useState ,useEffect } from "react";
 
@@ -150,7 +151,7 @@ const profilePictureOptions = [
            </div>
            <div className="right-div-group">
             <div>
-            <p>Create a New Group</p>
+            <h3>Create a New Group</h3>
                 <p>Users added:</p>
                 {UsersAdded.map((user) => (
               <li key={user.id} className="add_user_to_group_list">
