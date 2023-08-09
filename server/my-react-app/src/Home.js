@@ -24,6 +24,7 @@ export default function Home() {
     const [editedMessage, setEditedMessage] = useState("");
     // const [countMessagesUnread, setCountMessagesUnread] = useState([]);
     const [searchValue, setSearchValue] = useState("");
+    const [participantsList, setParticipantsList]=useState([]);
 
     const navigate = useNavigate();
     // const audio = new Audio("audio/msg_bell.wav");
@@ -183,8 +184,8 @@ export default function Home() {
         return prevSenderIds.filter((senderId) => group.id !== senderId);
       });
      
-     // fetchUserName();
-            
+     
+     fetchParticipantsInfos(group) ;  
         setShowWindow(true);
         //return null;
       }
@@ -518,11 +519,7 @@ export default function Home() {
           setFlaggedMessage([...FlaggedMessages,newFlaggedMessage]) // a voir si on en a besoin
          
         } else {
-          // if(response.status===409)
-          // {
-          //   console.log("this message is already flagged.")
-          // }
-          // else{
+          
             console.error("Failed to add the new flagged message.");
           }
         // }
@@ -625,7 +622,6 @@ export default function Home() {
         navigate(`/group_profil/${selectedUser.id}`)
       }
       
-      //return null;
 
     }
     const DisplayYourInfos=async()=>{
@@ -637,31 +633,31 @@ export default function Home() {
       cookies.set(JSON.stringify(currentUser.email), currentTime, { path: '/' });
       navigate(`/`)
     }
-    // async function fetchUserName() {
-    //   const senderIds = messages.reduce((uniqueSenderIds, msg) => {
-    //     const senderId = msg.sender;
-    //     if (senderId !== currentUser.id && !uniqueSenderIds.includes(senderId)) {
-    //       uniqueSenderIds.push(senderId);
-    //     }
-    //     return uniqueSenderIds;
-    //   }, []);
+  
+    const fetchParticipantsInfos = async (selectedGroup) => {
+     
+             console.log("list participants",selectedGroup.participantsId);
+             const participantsInfoPromises = (selectedGroup.participantsId).map(async (participantId) => {
+              const participantResponse = await fetch(`/users/UserInfo?UserId=${participantId}`);
+              if (participantResponse.ok) {
+                const participantData = await participantResponse.json();
+                return participantData; // Renvoie les informations du participant
+              } else {
+                console.error(`Request for participant with ID ${participantId} failed with status code ${participantResponse.status}`);
+                return null;
+              }
+            });
+            
+            // Attendre que toutes les requêtes de récupération d'informations soient terminées
+            const participantsInfo = await Promise.all(participantsInfoPromises);
+            
+            // Filtrer les participantsInfo pour éliminer les entrées null
+            const filteredParticipantsInfo = participantsInfo.filter(info => info !== null);
+            
+            setParticipantsList(filteredParticipantsInfo); // Mettre à jour la variable d'état 'participantsList' avec les informations des participants
+          
+      }
       
-    //   console.log("sender group id", senderIds);
-      
-    //   try {
-    //     const encodedUserIdArray = encodeURIComponent(JSON.stringify(senderIds));
-    //     const response = await fetch(`/users/UserInfoAccordingIdArray?userIdArray=${encodedUserIdArray}`); 
-    //     if (response.ok) {
-    //       const userData = await response.json();
-    //       setuserListIdName(userData);
-    //     } else {
-    //       console.error(`Request failed with status code ${response.status}`);
-    //     }
-    //   } catch (error) {
-    //     console.error('An error occurred:', error);
-    //   }
-    // }
-    
    
    
 
@@ -720,9 +716,7 @@ export default function Home() {
           <button onClick={() => AddNewGroup()} className="new-group-button">
             New Group
           </button>
-          {/* <div>
-            <p>Hi {currentUser.name}</p>
-          </div> */}
+         
            <div className="contact_container" onClick={() => DisplayYourInfos()}>
                     <span><img src={currentUser.profil} className="img_contact"></img></span>
                         <span >{currentUser.name}</span>
@@ -784,6 +778,7 @@ export default function Home() {
                     </div>
               </div>
       <div className="messages-container">
+        
         {messages.map((msg) => (
         <li
           key={msg.id}
@@ -799,21 +794,22 @@ export default function Home() {
                value={editedMessage}
                onChange={(event) => setEditedMessage(event.target.value)}
              />
-             <button type="submit">Save</button>
+             <button type="submit" >Save</button>
            </form>
            <div className={`${msg.sender == currentUser.id ? "bubble-arrow alt" : "bubble-arrow"}`}></div>
            </div>
           ) : (
             // Sinon, afficher le texte du message
             <>
-          {/* {msg.isItGroup && msg.sender !=currentUser.id ?<span><p>{userListIdName.find(user => user.id === msg.sender)?.name}</p></span>:null}   */}
-          {/* {msg.isItGroup  ? (
-            <span>
-              <p>
-                {userListIdName.find(user => user.id === msg.sender)?.name || 'Unknown User'}
-              </p>
-            </span>
-          ) : null} */}
+                {/* {msg.isItGroup && msg.sender !=currentUser.id ?<span><p>{userListIdName.find(user => user.id === msg.sender)?.name}</p></span>:null}   */}
+                {msg.isItGroup ? (
+          <p className="participants_name">
+              {participantsList.find(user => user.id == msg.sender)?.name }
+          </p>
+      ) : null}
+
+
+          
 
           {msg.text !== "" ? <p>{msg.text}</p> : ""}
           {msg.image !== "" ? <img src={msg.image} className="img_msg" alt="Message image" /> : ""}
@@ -837,12 +833,13 @@ export default function Home() {
             <div className="message-menu">
               <button onClick={() => handleDeleteMessage(msg.id)}>Delete</button>
              {msg.image==""&& msg.sender==currentUser.id ? <button onClick={() => handleEditMessage(msg.id, msg.text)}>Modify</button>:null}
-             { msg.sender==selectedUser.id && msg.flagged== false ? <button onClick={() => handleReportMessage(msg)}>Report</button>:null}
+             { msg.sender!=currentUser.id && msg.flagged== false ? <button onClick={() => handleReportMessage(msg)}>Report</button>:null}
             </div>
           )}
         </li>
         
       ))}
+      
       </div>
             {selectedUser && (
               <form onSubmit={handleSubmitNewMessage}>
@@ -862,7 +859,7 @@ export default function Home() {
                   {selectedImage && (
                     <img src={selectedImage} alt="Selected Image" className="selected_image_newMsg" />
                   )}
-                <button type="submit" onClick={playAudio}>Send</button>
+                <button type="submit" onClick={playAudio} >Send</button>
               
               </form>
             )}

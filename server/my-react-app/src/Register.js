@@ -88,6 +88,13 @@ const handleSubmit = async (event) => {
       value: 'https://img.freepik.com/photos-gratuite/vue-verticale-du-celebre-rocher-plage-santa-giulia_268835-3741.jpg?w=2000',
       label: 'Troisième photo',
     },
+    {
+      value: 'https://cdn.futura-sciences.com/buildsv6/images/wide1920/0/0/d/00dd1479a5_108485_chat-domestique.jpg',
+      label: 'Quatrieme photo',
+    },
+    
+
+    
   ];
 
   return (
