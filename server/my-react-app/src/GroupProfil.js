@@ -31,16 +31,17 @@ export default function GroupProfil() {
     }
 
     const fetchParticipantsInfos = async () => {
-      try {
-        const response = await fetch(`/users/ParticipantsInfo?GroupId=${id}`); // Appeler la route GET pour récupérer les participants du groupe
-        if (response.ok) {
-          const participantsData = await response.json();
+    //   try {
+    //     const response = await fetch(`/users/ParticipantsInfo?GroupId=${id}`); // Appeler la route GET pour récupérer les participants du groupe
+    //     if (response.ok) {
+    //       const participantsData = await response.json();
           
-          // Récupérer les participantsId du groupe
-          const participantsIds = participantsData.participantsId;
-          console.log("participantsIds", participantsIds);
-          // Appeler la route GET pour récupérer les informations des participants
-          const participantsInfoPromises = participantsIds.map(async (participantId) => {
+    //       // Récupérer les participantsId du groupe
+    //       const participantsIds = participantsData.participantsId;
+    //       console.log("participantsIds", participantsIds);
+    //       // Appeler la route GET pour récupérer les informations des participants
+           console.log("list participants", JSON.parse(selectedGroup.participantsIds));
+           const participantsInfoPromises = JSON.parse(selectedGroup.participantsIds).map(async (participantId) => {
             const participantResponse = await fetch(`/users/UserInfo?UserId=${participantId}`);
             if (participantResponse.ok) {
               const participantData = await participantResponse.json();
@@ -58,12 +59,12 @@ export default function GroupProfil() {
           const filteredParticipantsInfo = participantsInfo.filter(info => info !== null);
           
           setParticipantsList(filteredParticipantsInfo); // Mettre à jour la variable d'état 'participantsList' avec les informations des participants
-        } else {
-          console.error(`Request failed with status code ${response.status}`);
-        }
-      } catch (error) {
-        console.error('An error occurred:', error);
-      }
+        // } else {
+        //   console.error(`Request failed with status code ${response.status}`);
+        // }
+    //   } catch (error) {
+    //     console.error('An error occurred:', error);
+    //   }
     }
     
 
@@ -91,6 +92,7 @@ export default function GroupProfil() {
            <img src="https://img.icons8.com/?size=512&id=6483&format=png" onClick={()=>ReturnToHome()} className="returnToHome"></img>
         <div className="main_content">
         <div className="contact_info_div">
+            
           <p className="contact_info_title">Group information:</p>
           {selectedGroup != null ? (
             <div className="user_info_container">

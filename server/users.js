@@ -289,6 +289,37 @@ router.get('/AllUsersWithCurrentUser', (req, res) => {
   });
 });
 
+router.get('/ParticipantsInfo', (req, res) => {
+  const groupId = req.query.GroupId;
+
+ 
+
+  // Create an SQL query with a prepared parameter
+  const query = 'SELECT participantsId FROM chat_groups WHERE id = ?';
+
+ 
+
+  // Execute the SQL query with the parameter
+  connection.query(query, [groupId], (err, results) => {
+    if (err) {
+      console.error('Error in request execution', err);
+      res.status(500); // Set the response status to 500 (Internal Server Error)
+      return res.send({ error: 'An error occurred while retrieving participants information.' });
+    }
+
+ 
+
+    // If the query executed successfully without any errors
+    // Get the participantsId array from the result
+    const group = results[0];
+    const participantsIdArray = JSON.parse(group.participantsId); // Parse the stringified JSON array
+    const participantsIdIntegers = participantsIdArray.map(id => parseInt(id)); // Convert each element to an integer
+
+    console.log("participantsId as integers:", participantsIdIntegers);
+    res.json({ participantsId: participantsIdIntegers }); // Send the participantsId as an array of integers
+  });
+});
+
 
   return router;
 };
