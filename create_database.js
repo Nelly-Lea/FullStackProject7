@@ -3,7 +3,7 @@
 // var con = mysql.createConnection({
 //   host: "localhost",
 //   user: "root",
-//   password: "Motdepasse17"
+//   password: "password"
 // });
 
 // // database creation
@@ -27,7 +27,7 @@ const mysql = require('mysql2');
 const dbConfig = {
   host: "localhost",
   user: "root",
-  password: "Motdepasse17",
+  password: "password",
   database: "db_project7"
 };
 
