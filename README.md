@@ -4,10 +4,12 @@
 
 This project is a chat system inspired by the WhatsApp application. There are two interfaces: an user interafce and administrative interface.
 
-**User interface**
+**User interface:**
+
 The application allows users to create an account and modify their information at any time. It enables sending, editing, deleting and reporting messages. Users can create discussion groups, and there is also the option to access information about groups and other users.
 
-**Administrative interface**
+**Administrative interface:**
+
 It designed for handling reported messages. The admin can choose to retain or delete flagged messages and track reported messages that have already been addressed. Moreover, the admin has access to user information.
 
 ## Feature of this project
