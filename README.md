@@ -12,7 +12,7 @@ The application allows users to create an account and modify their information a
 
 It designed for handling reported messages. The admin can choose to retain or delete flagged messages and track reported messages that have already been addressed. Moreover, the admin has access to user information.
 
-## Feature of this project
+## Features of this project
 
 - End-to-end application comprising both server and client components.  
 - Client mechanism developed using React with routing capabilities.  
