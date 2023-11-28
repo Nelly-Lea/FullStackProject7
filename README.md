@@ -14,12 +14,12 @@ It designed for handling reported messages. The admin can choose to retain or de
 
 ## Feature of this project
 
--End-to-end application comprising both server and client components.
--Client mechanism developed using React with routing capabilities.
--Communication mechanisms include fetch and REST API.
--Node.js mechanisms with the Express library for server-side development.
--Server interacts with a MySQL database for data management.
--Utilization of cookies to display the last connection.
+- End-to-end application comprising both server and client components.  
+- Client mechanism developed using React with routing capabilities.  
+- Communication mechanisms include fetch and REST API.  
+- Node.js mechanisms with the Express library for server-side development.  
+- Server interacts with a MySQL database for data management.  
+- Utilization of cookies to display the last connection.
 
 
 
